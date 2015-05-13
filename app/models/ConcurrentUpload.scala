@@ -1,11 +1,8 @@
 package models
 
-import play.api.Logger
-
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.Future
 import akka.actor._
-import akka.ConfigurationException
 import akka.pattern.ask
 import play.api.libs.concurrent.Akka._
 import play.api.libs.Crypto.sign
@@ -13,12 +10,10 @@ import play.api.libs.Crypto.sign
 object ConcurrentUpload {
 
   import play.api.Play.current
-  import models.Storage.{Add, Remove, Test}
 
   implicit private val timeout: akka.util.Timeout = 1 second
 
   private val supervisor: ActorRef = system.actorOf(Props[ConcurrentUpload], "Supervisor")
-  private val storage: ActorRef = system.actorOf(Props[Storage], "Storage")
 
   def getActorName(identifier: String): String = {
     sign(identifier)
@@ -28,7 +23,7 @@ object ConcurrentUpload {
     val chunkNumber: Int = chunkInfo("resumableChunkNumber").head.toInt
     val identifier: String = chunkInfo("resumableIdentifier").head
     val actorName: String = getActorName(identifier)
-    (storage ? new Test(actorName, chunkNumber)).mapTo[Boolean]
+    (supervisor ? new Test(actorName, chunkNumber)).mapTo[Boolean]
   }
 
   def concatenateFileChunk(chunkInfo: Map[String, Seq[String]], chunk: Array[Byte]): Future[String] = {
@@ -47,17 +42,12 @@ object ConcurrentUpload {
 
     // Concatenate chunks
     (supervisor ? new UploadData(actorName, fc)).mapTo[UploadResult] map {
-      case r: UploadResult if r.status == "done" =>
-        Logger.info("UPLOADING A CHUNK HAS DONE!")
-        storage ! new Add(r.actorName, r.chunkNumber)
-        r.status
-      case r: UploadResult if r.status == "complete" =>
-        Logger.info("ALL CHUNKS HAS BEEN UPLOADED!")
-        storage ! new Remove(r.actorName)
+      case r: UploadResult =>
         r.status
     }
   }
 
+  case class Test(actorName: String, chunkNumber: Int)
   case class UploadData(actorName: String, fc: FileChunk)
   case class UploadProgress(actorName: String, msg: String, chunkNumber: Int, senderRef: ActorRef)
   case class UploadResult(actorName: String, status: String, chunkNumber: Int)
@@ -66,22 +56,35 @@ object ConcurrentUpload {
 class ConcurrentUpload extends Actor {
 
   import play.api.Play.current
-  import models.ConcurrentUpload.{UploadData, UploadProgress, UploadResult}
+  import models.ConcurrentUpload.{Test, UploadData, UploadProgress, UploadResult}
 
   implicit private val timeout: akka.util.Timeout = 1 second
 
   private val children: scala.collection.mutable.Map[String, ActorRef] = scala.collection.mutable.Map.empty[String, ActorRef]
 
   def receive = {
+
+    // UPLOAD
     case d: UploadData =>
       concatenate(d.actorName, d.fc)
     case p: UploadProgress if p.msg == "done" =>
       p.senderRef ! new UploadResult(p.actorName, p.msg, p.chunkNumber)
     case p: UploadProgress if p.msg == "complete" =>
       children.get(p.actorName) match {
-        case Some(childRef: ActorRef) =>
-          context.stop(childRef)
+        case Some(fiRef: ActorRef) =>
+          context.stop(fiRef)
           p.senderRef ! new UploadResult(p.actorName, p.msg, p.chunkNumber)
+      }
+    case p: UploadProgress if p.msg == "error" =>
+      p.senderRef ! new UploadResult(p.actorName, p.msg, p.chunkNumber)
+
+    // TEST
+    case t: Test =>
+      children.get(t.actorName) match {
+        case Some(fiRef: ActorRef) =>
+          fiRef ! (t.chunkNumber, sender())
+        case None =>
+          sender() ! false
       }
   }
 
