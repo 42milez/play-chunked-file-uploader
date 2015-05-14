@@ -15,9 +15,7 @@ object ConcurrentUpload {
 
   private val supervisor: ActorRef = system.actorOf(Props[ConcurrentUpload], "Supervisor")
 
-  def getActorName(identifier: String): String = {
-    sign(identifier)
-  }
+  def getActorName(identifier: String): String = { sign(identifier) }
 
   def checkExistenceFor(chunkInfo: Map[String, Seq[String]]): Future[Boolean] = {
     val chunkNumber: Int = chunkInfo("resumableChunkNumber").head.toInt
