@@ -7,16 +7,12 @@ import models.ConcurrentUpload
 
 object Uploads extends Controller {
 
-  def uploadForm = Action {
-    Ok(views.html.uploadForm())
-  }
+  def uploadForm = Action { Ok(views.html.uploadForm()) }
 
   def testBeforeUpload = Action.async { implicit request =>
     ConcurrentUpload.checkExistenceFor(request.queryString) map {
-      case true =>
-        Ok
-      case false =>
-        NotFound
+      case true => Ok
+      case false => NotFound
     }
   }
 
@@ -30,16 +26,12 @@ object Uploads extends Controller {
         raw.asBytes(currentChunkSize) match {
           case Some(bytes: Array[Byte]) =>
             ConcurrentUpload.concatenateFileChunk(queryString, bytes) map {
-              case ("done" | "complete") =>
-                Ok
-              case "error" =>
-                InternalServerError
+              case ("done" | "complete") => Ok
+              case "error" => InternalServerError
             }
-          case None =>
-            Future { InternalServerError }
+          case None => Future { InternalServerError }
         }
-      case None =>
-        Future { BadRequest }
+      case None => Future { BadRequest }
     }
   }
 }
