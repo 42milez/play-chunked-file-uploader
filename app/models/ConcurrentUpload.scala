@@ -46,7 +46,7 @@ object ConcurrentUpload {
 
   case class Test(actorName: String, chunkNumber: Int)
   case class UploadData(actorName: String, fc: FileChunk)
-  case class UploadProgress(actorName: String, msg: String, chunkNumber: Int, senderRef: ActorRef)
+  case class UploadProgress(actorName: String, status: String, chunkNumber: Int, senderRef: ActorRef)
   case class UploadResult(actorName: String, status: String, chunkNumber: Int)
 }
 
@@ -78,14 +78,14 @@ class ConcurrentUpload extends Actor {
 
     // in progress
     case p: UploadProgress =>
-      p.senderRef ! new UploadResult(p.actorName, p.msg, p.chunkNumber)
+      p.senderRef ! new UploadResult(p.actorName, p.status, p.chunkNumber)
 
     // all chunks was uploaded
-    case p: UploadProgress if p.msg == "complete" =>
+    case p: UploadProgress if p.status == "complete" =>
       children.get(p.actorName) match {
         case Some(fiRef: ActorRef) =>
           context.stop(fiRef)
-          p.senderRef ! new UploadResult(p.actorName, p.msg, p.chunkNumber)
+          p.senderRef ! new UploadResult(p.actorName, p.status, p.chunkNumber)
       }
   }
 
