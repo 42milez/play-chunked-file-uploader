@@ -30,7 +30,6 @@ class FileInfo(fileName: String, totalSize: Int, chunkSize: Int) extends Actor {
       Logger.debug(fc.chunkNumber + ": current chunk size => " + fc.currentChunkSize)
       Logger.debug(fc.chunkNumber + ": file name          => " + fc.filename)
       Logger.debug(fc.chunkNumber + ": identifier         => " + fc.identifier)
-      Logger.debug(fc.chunkNumber + ": relative path      => " + fc.relativePath)
       Logger.debug(fc.chunkNumber + ": total size         => " + fc.totalSize)
 
       val raf: RandomAccessFile = new RandomAccessFile(filePath, "rw")
@@ -78,4 +77,4 @@ class FileInfo(fileName: String, totalSize: Int, chunkSize: Int) extends Actor {
 }
 
 case class FileChunk(chunkNumber: Int, chunkSize: Int, currentChunkSize: Int,
-                     data: Array[Byte], filename: String, identifier: String, relativePath: String, totalSize: Int)
+                     data: Array[Byte], filename: String, identifier: String, totalSize: Int)

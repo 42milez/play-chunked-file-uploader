@@ -35,10 +35,9 @@ object ConcurrentUpload {
     val currentChunkSize: Int = chunkInfo("resumableCurrentChunkSize").head.toInt
     val filename: String = chunkInfo("resumableFilename").head
     val identifier: String = chunkInfo("resumableIdentifier").head
-    val relativePath: String = chunkInfo("resumableRelativePath").head
     val totalSize: Int = chunkInfo("resumableTotalSize").head.toInt
     val actorName: String = getActorName(identifier)
-    val fc: FileChunk = FileChunk(chunkNumber, chunkSize, currentChunkSize, chunk, filename, identifier, relativePath, totalSize)
+    val fc: FileChunk = FileChunk(chunkNumber, chunkSize, currentChunkSize, chunk, filename, identifier, totalSize)
 
     // Concatenate chunks
     (supervisor ? new UploadData(actorName, fc)).mapTo[UploadResult] map {
