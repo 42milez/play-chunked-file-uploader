@@ -61,34 +61,40 @@ class ConcurrentUpload extends Actor {
 
   def receive = {
 
-    // UPLOAD
+    // Check whether a chunk was already uploaded.
+    case t: Test =>
+      children.get(t.actorName) match {
+        // uploaded
+        case Some(fiRef: ActorRef) =>
+          fiRef ! (t.chunkNumber, sender())
+        // NOT uploaded
+        case None =>
+          sender() ! false
+      }
+
+    // upload a chunk
     case d: UploadData =>
       concatenate(d.actorName, d.fc)
-    case p: UploadProgress if p.msg == "done" =>
+
+    // in progress
+    case p: UploadProgress =>
       p.senderRef ! new UploadResult(p.actorName, p.msg, p.chunkNumber)
+
+    // all chunks was uploaded
     case p: UploadProgress if p.msg == "complete" =>
       children.get(p.actorName) match {
         case Some(fiRef: ActorRef) =>
           context.stop(fiRef)
           p.senderRef ! new UploadResult(p.actorName, p.msg, p.chunkNumber)
       }
-    case p: UploadProgress if p.msg == "error" =>
-      p.senderRef ! new UploadResult(p.actorName, p.msg, p.chunkNumber)
-
-    // TEST
-    case t: Test =>
-      children.get(t.actorName) match {
-        case Some(fiRef: ActorRef) =>
-          fiRef ! (t.chunkNumber, sender())
-        case None =>
-          sender() ! false
-      }
   }
 
   private def concatenate(actorName: String, fc: FileChunk): Unit = {
     children.get(actorName) match {
+      // the actor is exist
       case Some(fiRef: ActorRef) =>
         fiRef ! (fc, sender())
+      // the actor is NOT exist
       case None =>
         val fiRef = system.actorOf(FileInfo.props(fc.filename, fc.totalSize, fc.chunkSize), actorName)
         children.put(actorName, fiRef)
