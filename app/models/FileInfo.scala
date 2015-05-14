@@ -5,7 +5,7 @@ import java.nio.channels.ClosedChannelException
 import scala.collection.mutable.{Set => MutableSet}
 import scala.math.ceil
 import akka.actor.{Actor, ActorRef, Props}
-import play.api.{Logger, Play}
+import play.api.Play
 import play.api.Play.current
 
 // See below for a practical design of creating an actor.
@@ -26,12 +26,6 @@ class FileInfo(fileName: String, totalSize: Int, chunkSize: Int) extends Actor {
   def receive = {
     case (fc: FileChunk, senderRef: ActorRef) =>
 
-      Logger.debug(fc.chunkNumber + ": chunk size         => " + fc.chunkSize)
-      Logger.debug(fc.chunkNumber + ": current chunk size => " + fc.currentChunkSize)
-      Logger.debug(fc.chunkNumber + ": file name          => " + fc.filename)
-      Logger.debug(fc.chunkNumber + ": identifier         => " + fc.identifier)
-      Logger.debug(fc.chunkNumber + ": total size         => " + fc.totalSize)
-
       val raf: RandomAccessFile = new RandomAccessFile(filePath, "rw")
       var isError: Boolean = false
 
@@ -42,14 +36,11 @@ class FileInfo(fileName: String, totalSize: Int, chunkSize: Int) extends Actor {
       }
       catch {
         case _: ClosedChannelException =>
-          Logger.debug(fc.chunkNumber + ": ClosedChannelException has occurred.")
           isError = true
         case _: IndexOutOfBoundsException =>
-          Logger.debug(fc.chunkNumber + ": IndexOutOfBoundsException has occurred.")
           isError = true
       }
       finally {
-        // Close the channel in finally block to avoid ClosedChannelException.
         raf.close()
       }
 
@@ -57,13 +48,10 @@ class FileInfo(fileName: String, totalSize: Int, chunkSize: Int) extends Actor {
         sender() ! new UploadProgress(self.path.name, "error", fc.chunkNumber, senderRef)
       }
       else {
-        Logger.debug(fc.chunkNumber + ": uploaded chunks    => " + uploadedChunks.size + "/" + count)
         if (uploadedChunks.size >= count) {
-          Logger.info("ALL CHUNKS HAS BEEN UPLOADED!")
           sender() ! new UploadProgress(self.path.name, "complete", fc.chunkNumber, senderRef)
         }
         else {
-          Logger.info("UPLOADING A CHUNK HAS DONE!")
           sender() ! new UploadProgress(self.path.name, "done", fc.chunkNumber, senderRef)
         }
       }
@@ -71,8 +59,6 @@ class FileInfo(fileName: String, totalSize: Int, chunkSize: Int) extends Actor {
       // check existence for a chunk index
       val isUploadedChunk = uploadedChunks.contains(chunkNumber)
       senderRef ! isUploadedChunk
-    case _ =>
-      Logger.error("Some Error has occurred.")
   }
 }
 
