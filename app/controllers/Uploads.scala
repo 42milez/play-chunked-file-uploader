@@ -3,7 +3,7 @@ package controllers
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import play.api.mvc.{RawBuffer, Action, Controller}
-import models.ConcurrentUpload
+import actor.ConcurrentUpload
 
 object Uploads extends Controller {
 

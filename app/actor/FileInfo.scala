@@ -1,12 +1,12 @@
-package models
+package actor
 
 import java.io.{File, RandomAccessFile}
 import java.nio.channels.ClosedChannelException
-import scala.collection.mutable.{Set => MutableSet}
-import scala.math.ceil
 import akka.actor.{Actor, ActorRef, Props}
 import play.api.Play
 import play.api.Play.current
+import scala.collection.mutable.{Set => MutableSet}
+import scala.math.ceil
 
 // See below for a practical design of creating an actor.
 // Props in: http://doc.akka.io/docs/akka/snapshot/scala/actors.html
@@ -16,8 +16,6 @@ object FileInfo {
 
 class FileInfo(fileName: String, totalSize: Int, chunkSize: Int) extends Actor {
 
-  import models.ConcurrentUpload.UploadProgress
-  
   private val baseDir: String = Play.application.path + "/storage"
   private val count: Int = ceil(totalSize.toDouble / chunkSize.toDouble).toInt
   private val filePath: String = new File(baseDir, fileName).getAbsolutePath

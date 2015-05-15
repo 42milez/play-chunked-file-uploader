@@ -1,18 +1,17 @@
-package models
+package actor
 
-import scala.concurrent.duration.DurationInt
-import scala.concurrent.Future
 import akka.actor._
 import akka.pattern.ask
-import play.api.libs.concurrent.Akka._
 import play.api.libs.Crypto.sign
+import play.api.libs.concurrent.Akka._
+import scala.concurrent.Future
+import scala.concurrent.duration.DurationInt
 
 object ConcurrentUpload {
 
   import play.api.Play.current
 
   implicit private val timeout: akka.util.Timeout = 1 second
-
   private val supervisor: ActorRef = system.actorOf(Props[ConcurrentUpload], "Supervisor")
 
   def getActorName(identifier: String): String = { sign(identifier) }
@@ -43,17 +42,11 @@ object ConcurrentUpload {
         r.status
     }
   }
-
-  case class Test(actorName: String, chunkNumber: Int)
-  case class UploadData(actorName: String, fc: FileChunk)
-  case class UploadProgress(actorName: String, status: String, chunkNumber: Int, senderRef: ActorRef)
-  case class UploadResult(actorName: String, status: String, chunkNumber: Int)
 }
 
 class ConcurrentUpload extends Actor {
 
   import play.api.Play.current
-  import models.ConcurrentUpload.{Test, UploadData, UploadProgress, UploadResult}
 
   implicit private val timeout: akka.util.Timeout = 1 second
 
@@ -102,3 +95,8 @@ class ConcurrentUpload extends Actor {
     }
   }
 }
+
+case class Test(actorName: String, chunkNumber: Int)
+case class UploadData(actorName: String, fc: FileChunk)
+case class UploadProgress(actorName: String, status: String, chunkNumber: Int, senderRef: ActorRef)
+case class UploadResult(actorName: String, status: String, chunkNumber: Int)
