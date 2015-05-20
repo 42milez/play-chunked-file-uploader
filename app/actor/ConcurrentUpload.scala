@@ -1,14 +1,13 @@
 package actor
 
-import akka.actor._
+import akka.actor.{Actor, ActorRef, Props}
 import akka.pattern.ask
+import play.api.libs.concurrent.Akka.system
 import play.api.libs.Crypto.sign
-import play.api.libs.concurrent.Akka._
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
 
 object ConcurrentUpload {
-
   import play.api.Play.current
 
   implicit private val timeout: akka.util.Timeout = 1 second
@@ -69,17 +68,18 @@ class ConcurrentUpload extends Actor {
     case d: UploadData =>
       concatenate(d.actorName, d.fc)
 
-    // in progress
-    case p: UploadProgress =>
-      p.senderRef ! new UploadResult(p.actorName, p.status, p.chunkNumber)
-
     // all chunks was uploaded
     case p: UploadProgress if p.status == "complete" =>
       children.get(p.actorName) match {
         case Some(fiRef: ActorRef) =>
           context.stop(fiRef)
+          children.remove(p.actorName)
           p.senderRef ! new UploadResult(p.actorName, p.status, p.chunkNumber)
       }
+
+    // in progress
+    case p: UploadProgress =>
+      p.senderRef ! new UploadResult(p.actorName, p.status, p.chunkNumber)
   }
 
   private def concatenate(actorName: String, fc: FileChunk): Unit = {
