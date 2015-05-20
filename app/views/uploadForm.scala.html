@@ -39,12 +39,13 @@
             <script>
 
                 var r = new Resumable({
-                    target: 'http://localhost:9000/upload',
                     chunkSize: 1 * 1024 * 1024,
+                    forceChunkSize: false,
+                    method: "octet",
                     simultaneousUploads: 4,
+                    target: 'http://localhost:9000/upload',
                     testChunks: true,
-                    throttleProgressCallbacks: 1,
-                    method: "octet"
+                    throttleProgressCallbacks: 1
                   });
 
                 // Resumable.js isn't supported, fall back on a different method
