@@ -63,9 +63,6 @@
                   r.on('fileAdded', function(file) {
                       // Show progress pabr
                       $('.resumable-progress, .resumable-list').show();
-                      // Show pause, hide resume
-                      // $('.resumable-progress .progress-resume-link').hide();
-                      // $('.resumable-progress .progress-pause-link').show();
                       // Add the file to the list
                       $('.resumable-list').append('<li class="resumable-file-' + file.uniqueIdentifier + '">Uploading <span class="resumable-file-name"></span> <span class="resumable-file-progress"></span>');
                       $('.resumable-file-' + file.uniqueIdentifier + ' .resumable-file-name').html(file.fileName);
@@ -87,7 +84,6 @@
                   r.on('complete', function() {
                       // Hide pause/resume when the upload has completed
                       $('.resumable-progress .progress-resume-link, .resumable-progress .progress-pause-link').hide();
-                      // $('.progress-container').css({width: 800 + 'px'});
                     });
 
                   r.on('fileSuccess', function(file, message) {
