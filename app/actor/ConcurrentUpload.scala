@@ -4,12 +4,11 @@ import akka.actor.{Actor, ActorRef, Props}
 import akka.pattern.ask
 import play.api.libs.concurrent.Akka.system
 import play.api.libs.Crypto.sign
+import play.api.Play.current
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
 
 object ConcurrentUpload {
-  import play.api.Play.current
-
   implicit private val timeout: akka.util.Timeout = 1 second
   private val supervisor: ActorRef = system.actorOf(Props[ConcurrentUpload], "Supervisor")
 
@@ -44,11 +43,7 @@ object ConcurrentUpload {
 }
 
 class ConcurrentUpload extends Actor {
-
-  import play.api.Play.current
-
   implicit private val timeout: akka.util.Timeout = 1 second
-
   private val children: scala.collection.mutable.Map[String, ActorRef] = scala.collection.mutable.Map.empty[String, ActorRef]
 
   def receive = {
