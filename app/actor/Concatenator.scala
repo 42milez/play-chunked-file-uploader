@@ -13,11 +13,11 @@ import models.{File => FileM}
 
 // See below for a practical design of creating an actor.
 // Props in: http://doc.akka.io/docs/akka/snapshot/scala/actors.html
-object FileInfo {
-  def props(fileName: String, totalSize: Int, chunkSize: Int): Props = Props(new FileInfo(fileName, totalSize, chunkSize))
+object Concatenator {
+  def props(fileName: String, totalSize: Int, chunkSize: Int): Props = Props(new Concatenator(fileName, totalSize, chunkSize))
 }
 
-class FileInfo(fileName: String, totalSize: Int, chunkSize: Int) extends Actor {
+class Concatenator(fileName: String, totalSize: Int, chunkSize: Int) extends Actor {
   private val baseDir: String = Play.application.path + "/storage"
   private val count: Int = ceil(totalSize.toDouble / chunkSize.toDouble).toInt
   private val filePath: String = new File(baseDir, fileName).getAbsolutePath

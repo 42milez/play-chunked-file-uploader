@@ -84,7 +84,7 @@ class ConcurrentUploader extends Actor {
         fiRef ! (fc, sender())
       // the actor is NOT exist
       case None =>
-        val fiRef = system.actorOf(FileInfo.props(fc.filename, fc.totalSize, fc.chunkSize), actorName)
+        val fiRef = system.actorOf(Concatenator.props(fc.filename, fc.totalSize, fc.chunkSize), actorName)
         children.put(actorName, fiRef)
         fiRef ! (fc, sender())
     }
