@@ -7,7 +7,7 @@ import play.api.mvc.{Action, Controller, RawBuffer}
 import actor.ConcurrentUpload
 
 /** A controller which handles some file uploading operations. */
-object Uploads extends Controller {
+object UploadService extends Controller {
 
   /** Generate a file upload form.
    *
