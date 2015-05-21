@@ -12,8 +12,8 @@ libraryDependencies ++= Seq(
   cache,
   specs2 % Test,
   "com.h2database" % "h2" % "1.4.187",
-  "com.typesafe.play" %% "play-slick" % "1.0.0-RC2",
-  "com.typesafe.play" %% "play-slick-evolutions" % "1.0.0-RC2"
+  "com.typesafe.play" %% "play-slick" % "1.0.0-RC3",
+  "com.typesafe.play" %% "play-slick-evolutions" % "1.0.0-RC3"
 )
 
 scalacOptions += "-feature"
