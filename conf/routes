@@ -5,9 +5,9 @@
 # Home page
 GET         /                    controllers.Application.index
 
-GET         /uploadform          controllers.Uploads.uploadForm
-GET         /upload              controllers.Uploads.testBeforeUpload
-POST        /upload              controllers.Uploads.upload
+GET         /uploadform          controllers.UploadService.uploadForm
+GET         /upload              controllers.UploadService.testBeforeUpload
+POST        /upload              controllers.UploadService.upload
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file        controllers.Assets.at(path="/public", file)
