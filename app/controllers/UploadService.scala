@@ -4,7 +4,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import play.api.mvc.{Action, Controller, RawBuffer}
 
-import actor.ConcurrentUpload
+import actor.ConcurrentUploader
 
 /** A controller which handles some file uploading operations. */
 object UploadService extends Controller {
@@ -20,7 +20,7 @@ object UploadService extends Controller {
    * @return Future[Result]
    */
   def testBeforeUpload = Action.async { implicit request =>
-    ConcurrentUpload.checkExistenceFor(request.queryString) map {
+    ConcurrentUploader.checkExistenceFor(request.queryString) map {
       case true => Ok
       case false => NotFound
     }
@@ -39,7 +39,7 @@ object UploadService extends Controller {
       case Some(raw: RawBuffer) =>
         raw.asBytes(currentChunkSize) match {
           case Some(bytes: Array[Byte]) =>
-            ConcurrentUpload.concatenateFileChunk(queryString, bytes) map {
+            ConcurrentUploader.concatenateFileChunk(queryString, bytes) map {
               case ("done" | "complete") => Ok
               case "error" => InternalServerError
             }

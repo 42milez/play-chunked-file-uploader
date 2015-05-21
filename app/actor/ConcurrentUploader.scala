@@ -8,9 +8,9 @@ import play.api.Play.current
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
 
-object ConcurrentUpload {
+object ConcurrentUploader {
   implicit private val timeout: akka.util.Timeout = 1 second
-  private val supervisor: ActorRef = system.actorOf(Props[ConcurrentUpload], "Supervisor")
+  private val supervisor: ActorRef = system.actorOf(Props[ConcurrentUploader], "Supervisor")
 
   def getActorName(identifier: String): String = { sign(identifier) }
 
@@ -42,7 +42,7 @@ object ConcurrentUpload {
   }
 }
 
-class ConcurrentUpload extends Actor {
+class ConcurrentUploader extends Actor {
   implicit private val timeout: akka.util.Timeout = 1 second
   private val children: scala.collection.mutable.Map[String, ActorRef] = scala.collection.mutable.Map.empty[String, ActorRef]
 
