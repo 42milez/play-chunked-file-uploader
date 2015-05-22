@@ -8,7 +8,12 @@ import play.api.Play.current
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
 
-object ConcurrentUploader {
+sealed trait _ConcurrentUploader {
+  def checkExistenceFor(chunkInfo: Map[String, Seq[String]]): Future[Boolean]
+  def concatenateFileChunk(chunkInfo: Map[String, Seq[String]], chunk: Array[Byte]): Future[String]
+}
+
+object ConcurrentUploader extends _ConcurrentUploader {
   implicit private val timeout: akka.util.Timeout = 1 second
   private val supervisor: ActorRef = system.actorOf(Props[ConcurrentUploader], "Supervisor")
 
