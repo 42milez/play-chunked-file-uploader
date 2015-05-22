@@ -50,9 +50,9 @@ trait _UploadService { this: Controller =>
               case ("done" | "complete") => Ok
               case "error" => InternalServerError
             }
-          case None => Future { InternalServerError }
+          case _ => Future { InternalServerError }
         }
-      case None => Future { BadRequest }
+      case _ => Future { BadRequest }
     }
   }
 }
