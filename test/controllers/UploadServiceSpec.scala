@@ -38,17 +38,7 @@ object UploadServiceSpec extends Specification with Mockito {
   )
 
   // Query Parameters with resumableCurrentChunkSize = 0
-  val params2 = Map(
-    "resumableChunkNumber" -> Seq("3"),
-    "resumableChunkSize" -> Seq("1048576"),
-    "resumableCurrentChunkSize" -> Seq("0"),
-    "resumableTotalSize" -> Seq("183119686"),
-    "resumableType" -> Seq("application/zip"),
-    "resumableIdentifier" -> Seq("183119686-datazip"),
-    "resumableFilename" -> Seq("data.zip"),
-    "resumableRelativePath" -> Seq("data.zip"),
-    "resumableTotalChunks" -> Seq("174")
-  )
+  val params2 = params1 + ("resumableCurrentChunkSize" -> "0")
 
   // Query String
   val qs1 = (for { (k: String, v: Seq[String]) <- params1 } yield k + "=" + encodePathSegment(v.head, "UTF-8")).mkString("&")
