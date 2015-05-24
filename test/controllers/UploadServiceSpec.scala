@@ -38,7 +38,7 @@ object UploadServiceSpec extends Specification with Mockito {
   )
 
   // Query Parameters with resumableCurrentChunkSize = 0
-  val params2 = params1 + ("resumableCurrentChunkSize" -> "0")
+  val params2 = params1 + ("resumableCurrentChunkSize" -> Seq("0"))
 
   // Query String
   val qs1 = (for { (k: String, v: Seq[String]) <- params1 } yield k + "=" + encodePathSegment(v.head, "UTF-8")).mkString("&")
