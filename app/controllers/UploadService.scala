@@ -6,7 +6,7 @@ import play.api.mvc.{AnyContent, Action, Controller, RawBuffer}
 
 import actor.{ConcurrentUploaderComponent, ConcurrentUploader}
 
-trait _UploadService { this: Controller =>
+trait UploadServiceComponent { this: Controller =>
   val concurrentUploader: ConcurrentUploaderComponent = ConcurrentUploader
 
   /** Generate a file upload form.
@@ -58,4 +58,4 @@ trait _UploadService { this: Controller =>
 }
 
 /** A controller which handles some file uploading operations. */
-object UploadService extends Controller with _UploadService
+object UploadService extends UploadServiceComponent with Controller

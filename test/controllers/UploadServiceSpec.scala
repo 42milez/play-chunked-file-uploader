@@ -48,14 +48,14 @@ object UploadServiceSpec extends Specification with Mockito {
   var chunk = new Array[Byte](1024 * 1024)   // 1 MB
   scala.util.Random.nextBytes(chunk)
 
-  def getUploadService = new _UploadService with Controller
+  def getUploadService = new UploadServiceComponent with Controller
 
   /** Returns a _UploadService controller which has a mock ConcurrentUploader.
     *
     * @param mock A mock of ConcurrentUploaderComponent
     * @return _UploadService
     */
-  def getUploadServiceWith(mock: ConcurrentUploaderComponent) = new _UploadService with Controller {
+  def getUploadServiceWith(mock: ConcurrentUploaderComponent) = new UploadServiceComponent with Controller {
     override val concurrentUploader = mock
   }
 
