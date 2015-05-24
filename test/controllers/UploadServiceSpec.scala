@@ -11,7 +11,7 @@ import org.specs2.mutable.Specification
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-import actor._ConcurrentUploader
+import actor.ConcurrentUploaderComponent
 
 object `package` {
   def fakeUploadServiceApp() = FakeApplication(
@@ -52,10 +52,10 @@ object UploadServiceSpec extends Specification with Mockito {
 
   /** Returns a _UploadService controller which has a mock ConcurrentUploader.
     *
-    * @param mock A mock of _ConcurrentUploader
+    * @param mock A mock of ConcurrentUploaderComponent
     * @return _UploadService
     */
-  def getUploadServiceWith(mock: _ConcurrentUploader) = new _UploadService with Controller {
+  def getUploadServiceWith(mock: ConcurrentUploaderComponent) = new _UploadService with Controller {
     override val concurrentUploader = mock
   }
 
@@ -80,7 +80,7 @@ object UploadServiceSpec extends Specification with Mockito {
 
   "UploadService#testBeforeUpload" should {
     "return \"Ok\" when the chunk is already uploaded" in new withUploadServiceApp {
-      val chunkUploaded = mock[_ConcurrentUploader].checkExistenceFor(params1) returns Future(true)
+      val chunkUploaded = mock[ConcurrentUploaderComponent].checkExistenceFor(params1) returns Future(true)
       val fr = FakeRequest(GET, "/upload?" + qs1)
       getUploadServiceWith(chunkUploaded).testBeforeUpload()(fr) match {
         case r: Future[Result] => status(r) must equalTo(OK)
@@ -90,7 +90,7 @@ object UploadServiceSpec extends Specification with Mockito {
 
   "UploadService#testBeforeUpload" should {
     "return \"NotFound\" when the chunk is not uploaded" in new withUploadServiceApp {
-      val chunkNotUploaded = mock[_ConcurrentUploader].checkExistenceFor(params1) returns Future(false)
+      val chunkNotUploaded = mock[ConcurrentUploaderComponent].checkExistenceFor(params1) returns Future(false)
       val fr = FakeRequest(GET, "/upload?" + qs1)
       getUploadServiceWith(chunkNotUploaded).testBeforeUpload()(fr) match {
         case r: Future[Result] => status(r) must equalTo(NOT_FOUND)
@@ -100,7 +100,7 @@ object UploadServiceSpec extends Specification with Mockito {
 
   "UploadService#upload" should {
     "return \"Ok\" when a chunk is uploaded" in new withUploadServiceApp {
-      val chunkUploaded = mock[_ConcurrentUploader].concatenateFileChunk(params1, chunk) returns Future("done")
+      val chunkUploaded = mock[ConcurrentUploaderComponent].concatenateFileChunk(params1, chunk) returns Future("done")
       val fr = FakeRequest(GET, "/upload?" + qs1).withRawBody(chunk)
       getUploadServiceWith(chunkUploaded).upload()(fr) match {
         case r: Future[Result] => status(r) must equalTo(OK)
@@ -110,7 +110,7 @@ object UploadServiceSpec extends Specification with Mockito {
 
   "UploadService#upload" should {
     "return \"Ok\" when all chunks are uploaded" in new withUploadServiceApp {
-      val chunkUploaded = mock[_ConcurrentUploader].concatenateFileChunk(params1, chunk) returns Future("complete")
+      val chunkUploaded = mock[ConcurrentUploaderComponent].concatenateFileChunk(params1, chunk) returns Future("complete")
       val fr = FakeRequest(GET, "/upload?" + qs1).withRawBody(chunk)
       getUploadServiceWith(chunkUploaded).upload()(fr) match {
         case r: Future[Result] => status(r) must equalTo(OK)
@@ -140,7 +140,7 @@ object UploadServiceSpec extends Specification with Mockito {
 
   "UploadService#upload" should {
     "return \"InternalServerError\" when uploading a chunk is failed" in new withUploadServiceApp {
-      val chunkUploaded = mock[_ConcurrentUploader].concatenateFileChunk(params1, chunk) returns Future("error")
+      val chunkUploaded = mock[ConcurrentUploaderComponent].concatenateFileChunk(params1, chunk) returns Future("error")
       val fr = FakeRequest(GET, "/upload?" + qs1).withRawBody(chunk)
       getUploadServiceWith(chunkUploaded).upload()(fr) match {
         case r: Future[Result] => status(r) must equalTo(INTERNAL_SERVER_ERROR)
