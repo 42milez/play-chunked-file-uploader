@@ -41,11 +41,11 @@ object UploadServiceSpec extends Specification with Mockito {
   val params2 = params1 + ("resumableCurrentChunkSize" -> Seq("0"))
 
   // Query String
-  val qs1 = (for { (k: String, v: Seq[String]) <- params1 } yield k + "=" + encodePathSegment(v.head, "UTF-8")).mkString("&")
-  val qs2 = (for { (k: String, v: Seq[String]) <- params2 } yield k + "=" + encodePathSegment(v.head, "UTF-8")).mkString("&")
+  val qs1 = (for {(k: String, v: Seq[String]) <- params1} yield k + "=" + encodePathSegment(v.head, "UTF-8")).mkString("&")
+  val qs2 = (for {(k: String, v: Seq[String]) <- params2} yield k + "=" + encodePathSegment(v.head, "UTF-8")).mkString("&")
 
   // A Chunk
-  var chunk = new Array[Byte](1024 * 1024)   // 1 MB
+  var chunk = new Array[Byte](1024 * 1024) // 1 MB
   scala.util.Random.nextBytes(chunk)
 
   def getUploadService = new UploadServiceComponent with Controller
@@ -79,17 +79,16 @@ object UploadServiceSpec extends Specification with Mockito {
   //////////////////////////////////////////////////////////////////////
 
   "UploadService#testBeforeUpload" should {
-    "return \"Ok\" when the chunk is already uploaded" in new withUploadServiceApp {
+
+    "return \"Ok\" when the chunk is already uploaded" in new WithApplication {
       val chunkUploaded = mock[ConcurrentUploaderComponent].checkExistenceFor(params1) returns Future(true)
       val fr = FakeRequest(GET, "/upload?" + qs1)
       getUploadServiceWith(chunkUploaded).testBeforeUpload()(fr) match {
         case r: Future[Result] => status(r) must equalTo(OK)
       }
     }
-  }
 
-  "UploadService#testBeforeUpload" should {
-    "return \"NotFound\" when the chunk is not uploaded" in new withUploadServiceApp {
+    "return \"NotFound\" when the chunk is not uploaded" in new WithApplication {
       val chunkNotUploaded = mock[ConcurrentUploaderComponent].checkExistenceFor(params1) returns Future(false)
       val fr = FakeRequest(GET, "/upload?" + qs1)
       getUploadServiceWith(chunkNotUploaded).testBeforeUpload()(fr) match {
@@ -99,17 +98,16 @@ object UploadServiceSpec extends Specification with Mockito {
   }
 
   "UploadService#upload" should {
-    "return \"Ok\" when a chunk is uploaded" in new withUploadServiceApp {
+
+    "return \"Ok\" when a chunk is uploaded" in new WithApplication {
       val chunkUploaded = mock[ConcurrentUploaderComponent].concatenateFileChunk(params1, chunk) returns Future("done")
       val fr = FakeRequest(GET, "/upload?" + qs1).withRawBody(chunk)
       getUploadServiceWith(chunkUploaded).upload()(fr) match {
         case r: Future[Result] => status(r) must equalTo(OK)
       }
     }
-  }
 
-  "UploadService#upload" should {
-    "return \"Ok\" when all chunks are uploaded" in new withUploadServiceApp {
+    "return \"Ok\" when all chunks are uploaded" in new WithApplication {
       val chunkUploaded = mock[ConcurrentUploaderComponent].concatenateFileChunk(params1, chunk) returns Future("complete")
       val fr = FakeRequest(GET, "/upload?" + qs1).withRawBody(chunk)
       getUploadServiceWith(chunkUploaded).upload()(fr) match {
@@ -123,15 +121,14 @@ object UploadServiceSpec extends Specification with Mockito {
   //////////////////////////////////////////////////////////////////////
 
   "UploadService#testBeforeUpload" should {
-    "return \"BadRequest\" when a Map of a query string is empty" in new withUploadServiceApp {
+
+    "return \"BadRequest\" when a Map of a query string is empty" in new WithApplication {
       getUploadService.testBeforeUpload()(FakeRequest().copy(queryString = Map.empty[String, Seq[String]])) fold asFuture match {
         case r: Future[Result] => status(r) must equalTo(BAD_REQUEST)
       }
     }
-  }
 
-  "UploadService#testBeforeUpload" should {
-    "return \"BadRequest\" when a Map of a query string is null" in new withUploadServiceApp {
+    "return \"BadRequest\" when a Map of a query string is null" in new WithApplication {
       getUploadService.testBeforeUpload()(FakeRequest().copy(queryString = null)) fold asFuture match {
         case r: Future[Result] => status(r) must equalTo(BAD_REQUEST)
       }
@@ -139,26 +136,23 @@ object UploadServiceSpec extends Specification with Mockito {
   }
 
   "UploadService#upload" should {
-    "return \"InternalServerError\" when uploading a chunk is failed" in new withUploadServiceApp {
+
+    "return \"InternalServerError\" when uploading a chunk is failed" in new WithApplication {
       val chunkUploaded = mock[ConcurrentUploaderComponent].concatenateFileChunk(params1, chunk) returns Future("error")
       val fr = FakeRequest(GET, "/upload?" + qs1).withRawBody(chunk)
       getUploadServiceWith(chunkUploaded).upload()(fr) match {
         case r: Future[Result] => status(r) must equalTo(INTERNAL_SERVER_ERROR)
       }
     }
-  }
 
-  "UploadService#upload" should {
-    "return \"BadRequest\" when asRow function does not return Some(raw: RawBuffer)" in new withUploadServiceApp {
+    "return \"BadRequest\" when asRow function does not return Some(raw: RawBuffer)" in new WithApplication {
       val fr = FakeRequest(GET, "/upload?" + qs1)
       getUploadService.upload()(fr) match {
         case r: Future[Result] => status(r) must equalTo(BAD_REQUEST)
       }
     }
-  }
 
-  "UploadService#upload" should {
-    "return \"InternalServerError\" when asBytes function does not return Some(bytes: Array[Byte])" in new withUploadServiceApp {
+    "return \"InternalServerError\" when asBytes function does not return Some(bytes: Array[Byte])" in new WithApplication {
       val fr = FakeRequest(GET, "/upload?" + qs2).withRawBody(chunk)
       getUploadService.upload()(fr) match {
         case r: Future[Result] => status(r) must equalTo(INTERNAL_SERVER_ERROR)
