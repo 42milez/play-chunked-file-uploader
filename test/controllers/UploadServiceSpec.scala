@@ -10,9 +10,9 @@ import org.specs2.mutable.Specification
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-import actor.ConcurrentUploaderComponent
-
 object UploadServiceSpec extends Specification with Mockito {
+
+  import actor.ConcurrentUploaderComponent
 
   // Query Parameters
   val params1 = Map(
