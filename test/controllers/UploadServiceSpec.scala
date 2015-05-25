@@ -10,7 +10,7 @@ import org.specs2.mutable.Specification
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-object UploadServiceSpec extends Specification with Mockito {
+class UploadServiceSpec extends Specification with Mockito {
 
   import actor.ConcurrentUploaderComponent
 
