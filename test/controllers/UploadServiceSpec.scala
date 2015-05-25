@@ -1,9 +1,8 @@
 package controllers
 
-import play.api.DefaultGlobal
 import play.api.libs.iteratee._
 import play.api.mvc.{Controller, Result}
-import play.api.test.{FakeApplication, FakeRequest, WithApplication}
+import play.api.test.{FakeRequest, WithApplication}
 import play.api.test.Helpers._
 import play.utils.UriEncoding.encodePathSegment
 import org.specs2.mock._
@@ -12,15 +11,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 import actor.ConcurrentUploaderComponent
-
-object `package` {
-  def fakeUploadServiceApp() = FakeApplication(
-    additionalConfiguration = inMemoryDatabase(name = "default", options = Map("DB_CLOSE_DELAY" -> "0", "MODE" -> "MYSQL")),
-    withGlobal = Some(DefaultGlobal)
-  )
-}
-
-class withUploadServiceApp extends WithApplication(fakeUploadServiceApp())
 
 object UploadServiceSpec extends Specification with Mockito {
 
