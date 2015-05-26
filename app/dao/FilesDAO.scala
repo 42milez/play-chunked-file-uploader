@@ -1,12 +1,12 @@
 package dao
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import play.api.Play
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig}
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import slick.driver.H2Driver.api._
 import slick.driver.JdbcProfile
-import models.{File => FileM}
+import models.{File => FileM, Page}
 
 trait FilesComponent { self: HasDatabaseConfig[JdbcProfile] =>
   import driver.api._
@@ -24,18 +24,24 @@ class FilesDAO extends FilesComponent with HasDatabaseConfig[JdbcProfile] {
   def count(): Future[Int] =
     db.run(files.length.result)
 
-  def insert(file: FileM): Future[Unit] =
-    db.run(files += file).map(_ => ())
+  def insert(file: FileM): Future[FileM] =
+    db.run((files returning files.map(_.id) into ((file, id) => file.copy(id = Some(id)))) += file)
 
-  //  def list(page: Int = 0, pageSize: Int = 10): Future[Page[File]] = {
-  //    val offset = pageSize * page
-  //    val q = (for {
-  //      file <- files
-  //    } yield (file.id, file.name)).drop(offset).take(pageSize)
-  //    for {
-  //      totalRows <- count()
-  //      list = q.result.map (rows => rows.collect { case (id: Long, name: String) => File(Some(id), name) })
-  //      result <- db.run(list)
-  //    } yield Page(result, page, offset, totalRows)
-  //  }
+  def findById(id: Long): Future[FileM] =
+    db.run(files.filter(_.id === id).result.head)
+
+  def findByName(filename: String): Future[FileM] =
+    db.run(files.filter(_.name === filename).result.head)
+
+  def list(page: Int = 0, pageSize: Int = 10): Future[Page[FileM]] = {
+    val offset = pageSize * page
+    val q = (for {
+      file <- files
+    } yield (file.id, file.name)).drop(offset).take(pageSize)
+    for {
+      totalRows <- count()
+      list = q.result.map (rows => rows.collect { case (id: Long, name: String) => FileM(Some(id), name) })
+      result <- db.run(list)
+    } yield Page(result, page, offset, totalRows)
+  }
 }
