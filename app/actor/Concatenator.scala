@@ -47,16 +47,16 @@ class Concatenator(fileName: String, totalSize: Int, chunkSize: Int) extends Act
       }
 
       if (isError) {
-        sender() ! new UploadProgress(self.path.name, "error", fc.chunkNumber, senderRef)
+        sender() ! new Progress(self.path.name, "error", fc.chunkNumber, senderRef)
       }
       else {
         if (uploadedChunks.size >= count) {
           val filesDao = new FilesDAO
           filesDao.insert(FileM(None, fc.filename))
-          sender() ! new UploadProgress(self.path.name, "complete", fc.chunkNumber, senderRef)
+          sender() ! new Progress(self.path.name, "complete", fc.chunkNumber, senderRef)
         }
         else {
-          sender() ! new UploadProgress(self.path.name, "done", fc.chunkNumber, senderRef)
+          sender() ! new Progress(self.path.name, "done", fc.chunkNumber, senderRef)
         }
       }
 
