@@ -8,10 +8,6 @@ import play.api.Play.current
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.Future
 
-// ======================================================================
-//  New
-// ======================================================================
-
 /** */
 trait UploadServiceComponent {
   val supervisor: ActorRef
