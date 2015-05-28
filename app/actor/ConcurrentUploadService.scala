@@ -24,6 +24,7 @@ trait ConcurrentUploadServiceComponent { this: UploadServiceComponent =>
    * @return
    */
   def checkExistenceFor(chunkInfo: Map[String, Seq[String]]): Future[Boolean] = {
+    import ConcurrentUploadServiceProtocol.Test
     val chunkNumber: Int = chunkInfo("resumableChunkNumber").head.toInt
     val identifier: String = chunkInfo("resumableIdentifier").head
     val actorName: String = getActorName(identifier)
@@ -37,6 +38,7 @@ trait ConcurrentUploadServiceComponent { this: UploadServiceComponent =>
    * @return
    */
   def concatenateFileChunk(chunkInfo: Map[String, Seq[String]], chunk: Array[Byte]): Future[String] = {
+    import ConcurrentUploadServiceProtocol.{Data, Result}
     import scala.concurrent.ExecutionContext.Implicits.global
     val chunkNumber: Int = chunkInfo("resumableChunkNumber").head.toInt
     val chunkSize: Int = chunkInfo("resumableChunkSize").head.toInt
@@ -55,6 +57,8 @@ trait ConcurrentUploadServiceComponent { this: UploadServiceComponent =>
 
   /** */
   class Uploader extends Actor {
+    import ConcurrentUploadServiceProtocol._
+
     implicit private val timeout: akka.util.Timeout = 1 second
     private val children: scala.collection.mutable.Map[String, ActorRef] = scala.collection.mutable.Map.empty[String, ActorRef]
 
@@ -117,7 +121,9 @@ class ConcurrentUploadService extends ConcurrentUploadServiceComponent with Uplo
   val supervisor = system.actorOf(Uploader.props, "Supervisor")
 }
 
-case class Test(actorName: String, chunkNumber: Int)
-case class Data(actorName: String, fc: FileChunk)
-case class Progress(actorName: String, status: String, chunkNumber: Int, senderRef: ActorRef)
-case class Result(actorName: String, status: String, chunkNumber: Int)
+object ConcurrentUploadServiceProtocol {
+  case class Test(actorName: String, chunkNumber: Int)
+  case class Data(actorName: String, fc: FileChunk)
+  case class Progress(actorName: String, status: String, chunkNumber: Int, senderRef: ActorRef)
+  case class Result(actorName: String, status: String, chunkNumber: Int)
+}
