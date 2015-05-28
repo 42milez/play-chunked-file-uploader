@@ -1,13 +1,13 @@
 package controllers
 
+import play.api.mvc.{Action, Controller, RawBuffer}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import play.api.mvc.{AnyContent, Action, Controller, RawBuffer}
 
-import actor.{ConcurrentUploaderComponent, ConcurrentUploader}
+import actor.ConcurrentUploadService
 
-trait UploadServiceComponent { this: Controller =>
-  val concurrentUploader: ConcurrentUploaderComponent = ConcurrentUploader
+trait UploadComponent { this: Controller =>
+  val uploadService: ConcurrentUploadService
 
   /** Generate a file upload form.
     *
@@ -24,7 +24,7 @@ trait UploadServiceComponent { this: Controller =>
       case qs: Map[String, Seq[String]] =>
         if (qs.isEmpty) Future(BadRequest)
         else {
-          concurrentUploader.checkExistenceFor(request.queryString) map {
+          uploadService.checkExistenceFor(request.queryString) map {
             case true => Ok
             case false => NotFound
           }
@@ -46,7 +46,7 @@ trait UploadServiceComponent { this: Controller =>
       case Some(raw: RawBuffer) =>
         raw.asBytes(currentChunkSize) match {
           case Some(bytes: Array[Byte]) =>
-            concurrentUploader.concatenateFileChunk(queryString, bytes) map {
+            uploadService.concatenateFileChunk(queryString, bytes) map {
               case ("done" | "complete") => Ok
               case "error" => InternalServerError
             }
@@ -57,5 +57,7 @@ trait UploadServiceComponent { this: Controller =>
   }
 }
 
-/** A controller which handles some file uploading operations. */
-object UploadService extends UploadServiceComponent with Controller
+/** A controller which handles the file uploading operations. */
+object Upload extends UploadComponent with Controller {
+  val uploadService = new ConcurrentUploadService
+}
