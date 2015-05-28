@@ -18,6 +18,8 @@ object Concatenator {
 }
 
 class Concatenator(fileName: String, totalSize: Int, chunkSize: Int) extends Actor {
+  import ConcurrentUploadServiceProtocol.Progress
+
   private val baseDir: String = Play.application.path + "/storage"
   private val count: Int = ceil(totalSize.toDouble / chunkSize.toDouble).toInt
   private val filePath: String = new File(baseDir, fileName).getAbsolutePath
