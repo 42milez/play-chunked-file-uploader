@@ -26,11 +26,11 @@ class UploadServiceSpec extends Specification with Mockito {
 
   val chunkUploaded = dummyParams + ("resumableChunkNumber" -> Seq("3"))
   val chunkNotUploaded = dummyParams + ("resumableChunkNumber" -> Seq("4"))
-  val ChunkLengthZero = dummyParams + ("resumableCurrentChunkSize" -> Seq("0"))
+  val chunkLengthZero = dummyParams + ("resumableCurrentChunkSize" -> Seq("0"))
 
   val chunkUploadedQS = (for { (k: String, v: Seq[String]) <- chunkUploaded } yield k + "=" + encodePathSegment(v.head, "UTF-8")).mkString("&")
   val chunkNotUploadedQS = (for { (k: String, v: Seq[String]) <- chunkNotUploaded } yield k + "=" + encodePathSegment(v.head, "UTF-8")).mkString("&")
-  val ChunkLengthZeroQS = (for { (k: String, v: Seq[String]) <- ChunkLengthZero } yield k + "=" + encodePathSegment(v.head, "UTF-8")).mkString("&")
+  val chunkLengthZeroQS = (for { (k: String, v: Seq[String]) <- chunkLengthZero } yield k + "=" + encodePathSegment(v.head, "UTF-8")).mkString("&")
 
   var dummyChunk = new Array[Byte](1024 * 1024) // 1 MB
   scala.util.Random.nextBytes(dummyChunk)
@@ -131,7 +131,7 @@ class UploadServiceSpec extends Specification with Mockito {
     }
 
     "return \"InternalServerError\" when asBytes function does not return Some(bytes: Array[Byte])" in new WithApplication {
-      val fr = FakeRequest(GET, "/upload?" + ChunkLengthZeroQS).withRawBody(dummyChunk)
+      val fr = FakeRequest(GET, "/upload?" + chunkLengthZeroQS).withRawBody(dummyChunk)
       TestUpload.upload()(fr) match {
         case r: Future[Result] => status(r) must equalTo(INTERNAL_SERVER_ERROR)
       }
