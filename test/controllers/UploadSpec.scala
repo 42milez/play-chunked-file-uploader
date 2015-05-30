@@ -12,7 +12,7 @@ import scala.concurrent.Future
 
 import service.ConcurrentUploadService
 
-class UploadServiceSpec extends Specification with Mockito {
+class UploadSpec extends Specification with Mockito {
   val chunkFirst = Map(
     "resumableChunkNumber" -> Seq("1"),
     "resumableChunkSize" -> Seq("1048576"),
