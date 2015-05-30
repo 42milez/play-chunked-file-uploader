@@ -1,69 +1,14 @@
 package actor
 
 import akka.actor.{Actor, ActorRef, Props}
-import akka.pattern.ask
 import play.api.libs.concurrent.Akka.system
-import play.api.libs.Crypto.sign
 import play.api.Play.current
 import scala.concurrent.duration.DurationInt
-import scala.concurrent.Future
 
-/** */
-trait UploadServiceComponent {
-  val supervisor: ActorRef
-  def getActorName(identifier: String): String = { sign(identifier) }
-}
-
-/** */
-trait ConcurrentUploadServiceComponent { this: UploadServiceComponent =>
-  implicit private val timeout: akka.util.Timeout = 1 second
-
-  /**
-   *
-   * @param chunkInfo
-   * @return
-   */
-  def checkExistenceFor(chunkInfo: Map[String, Seq[String]]): Future[Boolean] = {
-    import ConcurrentUploaderProtocol.Test
-    val chunkNumber: Int = chunkInfo("resumableChunkNumber").head.toInt
-    val identifier: String = chunkInfo("resumableIdentifier").head
-    val actorName: String = getActorName(identifier)
-    (supervisor ? new Test(actorName, chunkNumber)).mapTo[Boolean]
-  }
-
-  /**
-   *
-   * @param chunkInfo
-   * @param chunk
-   * @return
-   */
-  def concatenateFileChunk(chunkInfo: Map[String, Seq[String]], chunk: Array[Byte]): Future[String] = {
-    import ConcurrentUploaderProtocol.{Data, Result}
-    import scala.concurrent.ExecutionContext.Implicits.global
-    val chunkNumber: Int = chunkInfo("resumableChunkNumber").head.toInt
-    val chunkSize: Int = chunkInfo("resumableChunkSize").head.toInt
-    val currentChunkSize: Int = chunkInfo("resumableCurrentChunkSize").head.toInt
-    val filename: String = chunkInfo("resumableFilename").head
-    val identifier: String = chunkInfo("resumableIdentifier").head
-    val totalSize: Int = chunkInfo("resumableTotalSize").head.toInt
-    val actorName: String = getActorName(identifier)
-    val fc: FileChunk = FileChunk(chunkNumber, chunkSize, currentChunkSize, chunk, filename, identifier, totalSize)
-    // Concatenate chunks
-    (supervisor ? new Data(actorName, fc)).mapTo[Result] map {
-      case r: Result =>
-        r.status
-    }
-  }
-}
-
-class ConcurrentUploadService extends ConcurrentUploadServiceComponent with UploadServiceComponent {
-  val supervisor = system.actorOf(ConcurrentUploader.props, "Supervisor")
-}
+import ConcurrentUploaderProtocol._
 
 /** */
 class ConcurrentUploader extends Actor {
-  import ConcurrentUploaderProtocol._
-
   implicit private val timeout: akka.util.Timeout = 1 second
   private val children: scala.collection.mutable.Map[String, ActorRef] = scala.collection.mutable.Map.empty[String, ActorRef]
 
