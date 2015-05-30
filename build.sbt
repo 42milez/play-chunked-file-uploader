@@ -1,12 +1,4 @@
-name := "PlayConcurrentStream"
-
-version := "1.0"
-
 lazy val `playconcurrentstream` = (project in file(".")).enablePlugins(PlayScala)
-
-scalaVersion := "2.11.6"
-
-resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
 
 libraryDependencies ++= Seq(
   cache,
@@ -14,10 +6,18 @@ libraryDependencies ++= Seq(
   "com.h2database" % "h2" % "1.4.187",
   "com.typesafe.akka" %% "akka-actor" % "2.3.11",
   "com.typesafe.akka" %% "akka-testkit" % "2.3.11" % Test,
-  "com.typesafe.play" %% "play-slick" % "1.0.0-RC3",
-  "com.typesafe.play" %% "play-slick-evolutions" % "1.0.0-RC3"
+  "com.typesafe.play" %% "play-slick" % "1.0.0",
+  "com.typesafe.play" %% "play-slick-evolutions" % "1.0.0"
 )
+
+name := "PlayConcurrentStream"
+
+resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
 
 scalacOptions += "-feature"
 
+scalaVersion := "2.11.6"
+
 unmanagedResourceDirectories in Test <+= baseDirectory ( _ /"target/web/public/test" )
+
+version := "1.0"
