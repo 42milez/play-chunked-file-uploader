@@ -10,9 +10,9 @@ import org.specs2.mutable.Specification
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class UploadServiceSpec extends Specification with Mockito {
-  import actor.ConcurrentUploadService
+import service.ConcurrentUploadService
 
+class UploadServiceSpec extends Specification with Mockito {
   val dummyParams = Map(
     "resumableChunkNumber" -> Seq("0"),
     "resumableChunkSize" -> Seq("1048576"),
