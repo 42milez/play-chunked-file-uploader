@@ -24,13 +24,13 @@ class ChunkConcatenator(fileName: String, totalSize: Int, chunkSize: Int) extend
     //////////////////////////////////////////////////////////////////////
     // RECEIVE A FILE CHUNK
     //////////////////////////////////////////////////////////////////////
-    case (fc: Chunk, senderRef: ActorRef) =>
+    case (c: Chunk, senderRef: ActorRef) =>
       val raf: RandomAccessFile = new RandomAccessFile(filePath, "rw")
       var isError: Boolean = false
       try {
-        raf.seek((fc.chunkNumber - 1) * fc.chunkSize)
-        raf.write(fc.data, 0, fc.currentChunkSize)
-        uploadedChunks += fc.chunkNumber
+        raf.seek((c.chunkNumber - 1) * c.chunkSize)
+        raf.write(c.data, 0, c.currentChunkSize)
+        uploadedChunks += c.chunkNumber
       }
       catch {
         case _: ClosedChannelException =>
@@ -43,16 +43,16 @@ class ChunkConcatenator(fileName: String, totalSize: Int, chunkSize: Int) extend
       }
 
       if (isError) {
-        sender() ! new Progress(self.path.name, "error", fc.chunkNumber, senderRef)
+        sender() ! new Progress(self.path.name, "error", c.chunkNumber, senderRef)
       }
       else {
         if (uploadedChunks.size >= count) {
           val filesDao = new FilesDAO
-          filesDao.insert(FileM(None, fc.fileName))
-          sender() ! new Progress(self.path.name, "complete", fc.chunkNumber, senderRef)
+          filesDao.insert(FileM(None, c.fileName))
+          sender() ! new Progress(self.path.name, "complete", c.chunkNumber, senderRef)
         }
         else {
-          sender() ! new Progress(self.path.name, "done", fc.chunkNumber, senderRef)
+          sender() ! new Progress(self.path.name, "done", c.chunkNumber, senderRef)
         }
       }
 

@@ -30,7 +30,7 @@ class ConcurrentUploader extends Actor {
       }
     // upload a chunk
     case d: Data =>
-      concatenate(d.actorName, d.fc)
+      concatenate(d.actorName, d.c)
     // all chunks was uploaded
     case p: Progress if p.status == "complete" =>
       children.get(p.actorName) match {
@@ -47,25 +47,25 @@ class ConcurrentUploader extends Actor {
   /**
    *
    * @param actorName
-   * @param fc
+   * @param c
    */
-  def concatenate(actorName: String, fc: Chunk): Unit = {
+  def concatenate(actorName: String, c: Chunk): Unit = {
     children.get(actorName) match {
       // the actor is exist
       case Some(fiRef: ActorRef) =>
-        fiRef ! (fc, sender())
+        fiRef ! (c, sender())
       // the actor is NOT exist
       case None =>
-        val fiRef = system.actorOf(ChunkConcatenator.props(fc.fileName, fc.totalSize, fc.chunkSize), actorName)
+        val fiRef = system.actorOf(ChunkConcatenator.props(c.fileName, c.totalSize, c.chunkSize), actorName)
         children.put(actorName, fiRef)
-        fiRef ! (fc, sender())
+        fiRef ! (c, sender())
     }
   }
 }
 
 object ConcurrentUploaderProtocol {
   case class Test(actorName: String, chunkNumber: Int)
-  case class Data(actorName: String, fc: Chunk)
+  case class Data(actorName: String, c: Chunk)
   case class Progress(actorName: String, status: String, chunkNumber: Int, senderRef: ActorRef)
   case class Result(actorName: String, status: String, chunkNumber: Int)
 }
