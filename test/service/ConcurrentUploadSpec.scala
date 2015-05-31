@@ -5,7 +5,7 @@ import org.specs2.mutable.Specification
 import play.api.test.WithApplication
 import scala.concurrent.ExecutionContext.Implicits.global
 
-import actor.ConcurrentUploader
+import actors.ConcurrentUploader
 import helper.AkkaHelper.TestEnvironment
 import helper.ResumableHelper.{chunkFirst, dummyChunk}
 
