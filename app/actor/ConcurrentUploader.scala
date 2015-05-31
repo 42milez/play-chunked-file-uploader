@@ -23,7 +23,7 @@ class ConcurrentUploader extends Actor {
       children.get(t.actorName) match {
         // uploaded
         case Some(fiRef: ActorRef) =>
-          fiRef ! (t.chunkNumber, sender())
+          fiRef ! (new ChunkConcatenatorProtocol.Test(t.chunkNumber), sender())
         // NOT uploaded
         case None =>
           sender() ! false
