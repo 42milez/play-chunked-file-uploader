@@ -11,7 +11,7 @@ import ConcurrentUploaderProtocol._
 import helper.AkkaHelper.TestEnvironment
 import helper.ResumableHelper.{dummyChunk, dummyParams}
 
-class ConcurrentUploadServiceSpec extends Specification {
+class ConcurrentUploaderSpec extends Specification {
   implicit private val timeout: Timeout = 1 second
 
   //////////////////////////////////////////////////////////////////////
