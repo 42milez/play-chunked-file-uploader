@@ -1,4 +1,4 @@
-package service
+package services
 
 import akka.actor.ActorSystem
 import org.specs2.mutable.Specification
