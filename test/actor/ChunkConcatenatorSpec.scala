@@ -1,8 +1,6 @@
 package actor
 
 import akka.actor.{ActorSystem, Props}
-import akka.testkit.TestActorRef
-import akka.util.Timeout
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
 import play.api.test.WithApplication
@@ -14,7 +12,7 @@ import helper.AkkaHelper.TestEnvironment
 import helper.ResumableHelper.{dummyChunk, dummyParams}
 
 class ChunkConcatenatorSpec extends Specification with Mockito {
-  implicit private val timeout: Timeout = 1 second
+  implicit private val timeout: akka.util.Timeout = 1 second
 
   //////////////////////////////////////////////////////////////////////
   // Test for "receive" function
