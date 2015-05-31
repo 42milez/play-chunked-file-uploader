@@ -48,7 +48,7 @@ class ConcurrentUploader extends Actor {
    * @param actorName
    * @param fc
    */
-  def concatenate(actorName: String, fc: FileChunk): Unit = {
+  def concatenate(actorName: String, fc: Chunk): Unit = {
     children.get(actorName) match {
       // the actor is exist
       case Some(fiRef: ActorRef) =>
@@ -64,7 +64,7 @@ class ConcurrentUploader extends Actor {
 
 object ConcurrentUploaderProtocol {
   case class Test(actorName: String, chunkNumber: Int)
-  case class Data(actorName: String, fc: FileChunk)
+  case class Data(actorName: String, fc: Chunk)
   case class Progress(actorName: String, status: String, chunkNumber: Int, senderRef: ActorRef)
   case class Result(actorName: String, status: String, chunkNumber: Int)
 }

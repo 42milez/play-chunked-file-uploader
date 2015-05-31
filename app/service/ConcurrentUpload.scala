@@ -1,6 +1,6 @@
 package service
 
-import actor.FileChunk
+import actor.Chunk
 import akka.actor.ActorRef
 import akka.pattern.ask
 import play.api.libs.Crypto.sign
@@ -48,7 +48,7 @@ trait ConcurrentUploadServiceComponent { this: UploadServiceComponent =>
     val identifier: String = chunkInfo("resumableIdentifier").head
     val totalSize: Int = chunkInfo("resumableTotalSize").head.toInt
     val actorName: String = getActorName(identifier)
-    val fc: FileChunk = FileChunk(chunkNumber, chunkSize, currentChunkSize, chunk, filename, identifier, totalSize)
+    val fc: Chunk = Chunk(chunkNumber, chunkSize, currentChunkSize, chunk, filename, identifier, totalSize)
     // Concatenate chunks
     (supervisor ? new Data(actorName, fc)).mapTo[Result] map {
       case r: Result =>

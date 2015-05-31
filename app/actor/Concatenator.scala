@@ -24,7 +24,7 @@ class ChunkConcatenator(fileName: String, totalSize: Int, chunkSize: Int) extend
     //////////////////////////////////////////////////////////////////////
     // RECEIVE A FILE CHUNK
     //////////////////////////////////////////////////////////////////////
-    case (fc: FileChunk, senderRef: ActorRef) =>
+    case (fc: Chunk, senderRef: ActorRef) =>
       val raf: RandomAccessFile = new RandomAccessFile(filePath, "rw")
       var isError: Boolean = false
       try {
@@ -72,5 +72,5 @@ object ChunkConcatenator {
   def props(fileName: String, totalSize: Int, chunkSize: Int): Props = Props(new ChunkConcatenator(fileName, totalSize, chunkSize))
 }
 
-case class FileChunk(chunkNumber: Int, chunkSize: Int, currentChunkSize: Int,
+case class Chunk(chunkNumber: Int, chunkSize: Int, currentChunkSize: Int,
                      data: Array[Byte], filename: String, identifier: String, totalSize: Int)
