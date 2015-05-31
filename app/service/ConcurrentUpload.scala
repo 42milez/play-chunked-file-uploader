@@ -1,6 +1,5 @@
 package service
 
-import actor.Chunk
 import akka.actor.ActorRef
 import akka.pattern.ask
 import play.api.libs.Crypto.sign
@@ -9,6 +8,7 @@ import play.api.Play.current
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{ExecutionContext, Future}
 
+import actor.ChunkConcatenatorProtocol.Chunk
 import actor.ConcurrentUploader
 import actor.ConcurrentUploaderProtocol._
 
