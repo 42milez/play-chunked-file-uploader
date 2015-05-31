@@ -4,37 +4,17 @@ import play.api.libs.iteratee._
 import play.api.mvc.{Controller, Result}
 import play.api.test.{FakeRequest, WithApplication}
 import play.api.test.Helpers.{BAD_REQUEST, INTERNAL_SERVER_ERROR, GET, NOT_FOUND, OK, status}
-import play.utils.UriEncoding.encodePathSegment
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
+import helper.ResumableHelper.{chunkFirst, chunkSecond, chunkLast}
+import helper.ResumableHelper.{chunkFirstQS, chunkSecondQS, chunkLastQS, chunkLengthZeroQS}
+import helper.ResumableHelper.dummyChunk
 import service.ConcurrentUpload
 
 class UploadSpec extends Specification with Mockito {
-  val chunkFirst = Map(
-    "resumableChunkNumber" -> Seq("1"),
-    "resumableChunkSize" -> Seq("1048576"),
-    "resumableCurrentChunkSize" -> Seq("1048576"),
-    "resumableTotalSize" -> Seq("183119686"),
-    "resumableType" -> Seq("application/zip"),
-    "resumableIdentifier" -> Seq("183119686-datazip"),
-    "resumableFilename" -> Seq("data.zip"),
-    "resumableRelativePath" -> Seq("data.zip"),
-    "resumableTotalChunks" -> Seq("174"))
-  val chunkSecond = chunkFirst + ("resumableChunkNumber" -> Seq("2"))
-  val chunkLast = chunkFirst + ("resumableChunkNumber" -> Seq("174"))
-  val chunkLengthZero = chunkFirst + ("resumableCurrentChunkSize" -> Seq("0"))
-
-  val chunkFirstQS = (for { (k: String, v: Seq[String]) <- chunkFirst } yield k + "=" + encodePathSegment(v.head, "UTF-8")).mkString("&")
-  val chunkSecondQS = (for { (k: String, v: Seq[String]) <- chunkSecond } yield k + "=" + encodePathSegment(v.head, "UTF-8")).mkString("&")
-  val chunkLastQS = (for { (k: String, v: Seq[String]) <- chunkLast } yield k + "=" + encodePathSegment(v.head, "UTF-8")).mkString("&")
-  val chunkLengthZeroQS = (for { (k: String, v: Seq[String]) <- chunkLengthZero } yield k + "=" + encodePathSegment(v.head, "UTF-8")).mkString("&")
-
-  var dummyChunk = new Array[Byte](1024 * 1024) // 1 MB
-  scala.util.Random.nextBytes(dummyChunk)
-
   object TestUpload extends UploadComponent with Controller with Mockito {
     val uploadService = mock[ConcurrentUpload]
     uploadService.checkExistenceFor(chunkFirst) returns Future(true)
