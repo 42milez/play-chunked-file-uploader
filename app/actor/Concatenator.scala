@@ -8,7 +8,7 @@ import play.api.Play.current
 import scala.collection.mutable.{Set => MutableSet}
 import scala.math.ceil
 
-import ChunkConcatenatorProtocol.Chunk
+import ChunkConcatenatorProtocol.{Chunk, Test}
 import ConcurrentUploaderProtocol.Progress
 import dao.FilesDAO
 import models.{File => FileM}
@@ -59,9 +59,9 @@ class ChunkConcatenator(fileName: String, totalSize: Int, chunkSize: Int) extend
     //////////////////////////////////////////////////////////////////////
     // RECEIVE A CHUNK NUMBER
     //////////////////////////////////////////////////////////////////////
-    case (chunkNumber: Int, senderRef: ActorRef) =>
+    case (t: Test, senderRef: ActorRef) =>
       // check existence for a chunk index
-      val isUploadedChunk = uploadedChunks.contains(chunkNumber)
+      val isUploadedChunk = uploadedChunks.contains(t.chunkNumber)
       senderRef ! isUploadedChunk
   }
 }
