@@ -1,4 +1,4 @@
-package actor
+package actors
 
 import akka.actor.{Actor, ActorRef, Props}
 import play.api.libs.concurrent.Akka.system

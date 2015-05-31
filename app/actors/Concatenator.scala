@@ -1,4 +1,4 @@
-package actor
+package actors
 
 import akka.actor.{Actor, ActorRef, Props}
 import java.io.{File, RandomAccessFile}
