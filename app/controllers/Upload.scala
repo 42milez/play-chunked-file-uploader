@@ -38,15 +38,13 @@ trait UploadComponent { this: Controller =>
     * @return Future[Result]
     */
   def upload = Action.async { implicit request =>
-    val queryString: Map[String, Seq[String]] = request.queryString
-    val currentChunkSize: Int = queryString("resumableCurrentChunkSize").head.toInt
-
+    val currentChunkSize = request.queryString("resumableCurrentChunkSize").head.toInt
     // Concatenate chunks received
     request.body.asRaw match {
       case Some(raw: RawBuffer) =>
         raw.asBytes(currentChunkSize) match {
           case Some(bytes: Array[Byte]) =>
-            uploadService.concatenateFileChunk(queryString, bytes) map {
+            uploadService.concatenateFileChunk(request.queryString, bytes) map {
               case ("done" | "complete") => Ok
               case "error" => InternalServerError
             }
