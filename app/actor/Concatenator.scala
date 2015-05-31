@@ -69,6 +69,7 @@ class ChunkConcatenator(fileName: String, totalSize: Int, chunkSize: Int) extend
 object ChunkConcatenatorProtocol {
   case class Chunk(chunkNumber: Int, chunkSize: Int, currentChunkSize: Int,
                    data: Array[Byte], filename: String, identifier: String, totalSize: Int)
+  case class Test(chunkNumber: Int)
 }
 
 // See below for a practical design of creating an actor.
