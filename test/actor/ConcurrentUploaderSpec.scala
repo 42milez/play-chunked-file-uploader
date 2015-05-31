@@ -7,6 +7,7 @@ import play.api.libs.Crypto.sign
 import play.api.test.WithApplication
 import scala.concurrent.duration.DurationInt
 
+import ChunkConcatenatorProtocol.Chunk
 import ConcurrentUploaderProtocol._
 import helper.AkkaHelper.TestEnvironment
 import helper.ResumableHelper.{dummyChunk, dummyParams}
@@ -44,7 +45,7 @@ class ConcurrentUploaderSpec extends Specification {
           val filename         = dummyParams("resumableFilename").head
           val identifier       = dummyParams("resumableIdentifier").head
           val totalSize        = dummyParams("resumableTotalSize").head.toInt
-          val fc               = FileChunk(chunkNumber, chunkSize, currentChunkSize, dummyChunk, filename, identifier, totalSize)
+          val fc               = Chunk(chunkNumber, chunkSize, currentChunkSize, dummyChunk, filename, identifier, totalSize)
           actorRef ! new Data(actorName, fc)
 
           //////////////////////////////
@@ -66,7 +67,7 @@ class ConcurrentUploaderSpec extends Specification {
         val filename         = dummyParams("resumableFilename").head
         val identifier       = dummyParams("resumableIdentifier").head
         val totalSize        = dummyParams("resumableTotalSize").head.toInt
-        val fc               = FileChunk(chunkNumber, chunkSize, currentChunkSize, dummyChunk, filename, identifier, totalSize)
+        val fc               = Chunk(chunkNumber, chunkSize, currentChunkSize, dummyChunk, filename, identifier, totalSize)
         actorRef ! new Data(actorName, fc)
         expectMsgPF() {
           case r: ConcurrentUploaderProtocol.Result => r.status must equalTo("done")
@@ -99,7 +100,7 @@ class ConcurrentUploaderSpec extends Specification {
           val filename         = dummyParams("resumableFilename").head
           val identifier       = dummyParams("resumableIdentifier").head
           val totalSize        = dummyParams("resumableTotalSize").head.toInt
-          val fc               = FileChunk(chunkNumber, chunkSize, currentChunkSize, dummyChunk, filename, identifier, totalSize)
+          val fc               = Chunk(chunkNumber, chunkSize, currentChunkSize, dummyChunk, filename, identifier, totalSize)
           actorRef ! new Data(actorName, fc)
 
           //////////////////////////////
