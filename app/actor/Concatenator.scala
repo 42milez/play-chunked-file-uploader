@@ -14,10 +14,10 @@ import dao.FilesDAO
 import models.{File => FileM}
 
 class ChunkConcatenator(fileName: String, totalSize: Int, chunkSize: Int) extends Actor {
-  private val baseDir: String = Play.application.path + "/storage"
-  private val count: Int = ceil(totalSize.toDouble / chunkSize.toDouble).toInt
-  private val filePath: String = new File(baseDir, fileName).getAbsolutePath
-  private val uploadedChunks: MutableSet[Int] = MutableSet.empty[Int]
+  protected val baseDir: String = Play.application.path + "/storage"
+  protected val count: Int = ceil(totalSize.toDouble / chunkSize.toDouble).toInt
+  protected val filePath: String = new File(baseDir, fileName).getAbsolutePath
+  protected val uploadedChunks: MutableSet[Int] = MutableSet.empty[Int]
 
   def receive = {
 
@@ -74,5 +74,6 @@ object ChunkConcatenatorProtocol {
 // See below for a practical design of creating an actor.
 // Props in: http://doc.akka.io/docs/akka/snapshot/scala/actors.html
 object ChunkConcatenator {
-  def props(fileName: String, totalSize: Int, chunkSize: Int): Props = Props(new ChunkConcatenator(fileName, totalSize, chunkSize))
+  def props(fileName: String, totalSize: Int, chunkSize: Int): Props =
+    Props(new ChunkConcatenator(fileName, totalSize, chunkSize))
 }
