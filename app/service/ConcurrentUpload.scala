@@ -28,9 +28,9 @@ trait ConcurrentUploadComponent { this: UploadComponent =>
    * @return
    */
   def checkExistenceFor(chunkInfo: Map[String, Seq[String]])(implicit ec: ExecutionContext): Future[Boolean] = {
-    val chunkNumber: Int = chunkInfo("resumableChunkNumber").head.toInt
-    val identifier: String = chunkInfo("resumableIdentifier").head
-    val actorName: String = getActorName(identifier)
+    val chunkNumber = chunkInfo("resumableChunkNumber").head.toInt
+    val identifier = chunkInfo("resumableIdentifier").head
+    val actorName = getActorName(identifier)
     (supervisor ? new Test(actorName, chunkNumber)).mapTo[Boolean]
   }
 
@@ -41,16 +41,16 @@ trait ConcurrentUploadComponent { this: UploadComponent =>
    * @return
    */
   def concatenateFileChunk(chunkInfo: Map[String, Seq[String]], chunk: Array[Byte])(implicit ec: ExecutionContext): Future[String] = {
-    val chunkNumber: Int = chunkInfo("resumableChunkNumber").head.toInt
-    val chunkSize: Int = chunkInfo("resumableChunkSize").head.toInt
-    val currentChunkSize: Int = chunkInfo("resumableCurrentChunkSize").head.toInt
-    val fileName: String = chunkInfo("resumableFilename").head
-    val identifier: String = chunkInfo("resumableIdentifier").head
-    val totalSize: Int = chunkInfo("resumableTotalSize").head.toInt
-    val actorName: String = getActorName(identifier)
-    val c: Chunk = Chunk(chunkNumber, chunkSize, currentChunkSize, chunk, fileName, identifier, totalSize)
+    val chunkNumber = chunkInfo("resumableChunkNumber").head.toInt
+    val chunkSize = chunkInfo("resumableChunkSize").head.toInt
+    val currentChunkSize = chunkInfo("resumableCurrentChunkSize").head.toInt
+    val fileName = chunkInfo("resumableFilename").head
+    val identifier = chunkInfo("resumableIdentifier").head
+    val totalSize = chunkInfo("resumableTotalSize").head.toInt
+    val actorName = getActorName(identifier)
+    val chunk = Chunk(chunkNumber, chunkSize, currentChunkSize, chunk, fileName, identifier, totalSize)
     // Concatenate chunks
-    (supervisor ? new Data(actorName, c)).mapTo[Result] map {
+    (supervisor ? new Data(actorName, chunk)).mapTo[Result] map {
       case r: Result =>
         r.status
     }
