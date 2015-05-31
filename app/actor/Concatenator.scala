@@ -8,12 +8,12 @@ import play.api.Play.current
 import scala.collection.mutable.{Set => MutableSet}
 import scala.math.ceil
 
+import ChunkConcatenatorProtocol.Chunk
+import ConcurrentUploaderProtocol.Progress
 import dao.FilesDAO
 import models.{File => FileM}
 
 class ChunkConcatenator(fileName: String, totalSize: Int, chunkSize: Int) extends Actor {
-  import ConcurrentUploaderProtocol.Progress
-
   private val baseDir: String = Play.application.path + "/storage"
   private val count: Int = ceil(totalSize.toDouble / chunkSize.toDouble).toInt
   private val filePath: String = new File(baseDir, fileName).getAbsolutePath
@@ -66,11 +66,13 @@ class ChunkConcatenator(fileName: String, totalSize: Int, chunkSize: Int) extend
   }
 }
 
+object ChunkConcatenatorProtocol {
+  case class Chunk(chunkNumber: Int, chunkSize: Int, currentChunkSize: Int,
+                   data: Array[Byte], filename: String, identifier: String, totalSize: Int)
+}
+
 // See below for a practical design of creating an actor.
 // Props in: http://doc.akka.io/docs/akka/snapshot/scala/actors.html
 object ChunkConcatenator {
   def props(fileName: String, totalSize: Int, chunkSize: Int): Props = Props(new ChunkConcatenator(fileName, totalSize, chunkSize))
 }
-
-case class Chunk(chunkNumber: Int, chunkSize: Int, currentChunkSize: Int,
-                     data: Array[Byte], filename: String, identifier: String, totalSize: Int)
