@@ -19,7 +19,7 @@ trait UploadComponent {
 }
 
 /** */
-trait ConcurrentUploadServiceComponent { this: UploadComponent =>
+trait ConcurrentUploadComponent { this: UploadComponent =>
   implicit private val timeout: akka.util.Timeout = 1 second
 
   /**
@@ -57,6 +57,6 @@ trait ConcurrentUploadServiceComponent { this: UploadComponent =>
   }
 }
 
-class ConcurrentUploadService extends ConcurrentUploadServiceComponent with UploadComponent {
+class ConcurrentUploadService extends ConcurrentUploadComponent with UploadComponent {
   val supervisor = system.actorOf(ConcurrentUploader.props, "Supervisor")
 }
