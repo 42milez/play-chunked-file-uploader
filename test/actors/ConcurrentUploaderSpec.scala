@@ -1,4 +1,4 @@
-package actor
+package actors
 
 import akka.actor.ActorSystem
 import org.specs2.mutable.Specification

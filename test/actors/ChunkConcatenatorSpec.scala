@@ -1,4 +1,4 @@
-package actor
+package actors
 
 import akka.actor.{ActorSystem, Props}
 import org.specs2.mock.Mockito
