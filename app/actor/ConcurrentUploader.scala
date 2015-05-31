@@ -11,7 +11,7 @@ import ConcurrentUploaderProtocol._
 /** */
 class ConcurrentUploader extends Actor {
   implicit private val timeout: akka.util.Timeout = 1 second
-  private val children: scala.collection.mutable.Map[String, ActorRef] = scala.collection.mutable.Map.empty[String, ActorRef]
+  private val children = scala.collection.mutable.Map.empty[String, ActorRef]
 
   /**
    *
