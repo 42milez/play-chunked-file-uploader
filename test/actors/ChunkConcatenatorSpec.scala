@@ -9,7 +9,7 @@ import scala.concurrent.duration.DurationInt
 import ChunkConcatenatorProtocol.{Chunk, Test}
 import ConcurrentUploaderProtocol._
 import helper.AkkaHelper.TestEnvironment
-import helper.ResumableHelper.{dummyChunk, dummyParams}
+import helper.ResumableHelper.{dummyChunk, chunkFirst => c1}
 
 class ChunkConcatenatorSpec extends Specification with Mockito {
   implicit private val timeout: akka.util.Timeout = 1 second
@@ -23,12 +23,12 @@ class ChunkConcatenatorSpec extends Specification with Mockito {
       "and then returns a Result protocol with its status \"done\" when a chunk is uploaded" in {
         new TestEnvironment(ActorSystem("TestSystem-01")) {
           new WithApplication {
-            val chunkNumber = dummyParams("resumableChunkNumber").head.toInt
-            val chunkSize = dummyParams("resumableChunkSize").head.toInt
-            val currentChunkSize = dummyParams("resumableCurrentChunkSize").head.toInt
-            val filename = dummyParams("resumableFilename").head
-            val identifier = dummyParams("resumableIdentifier").head
-            val totalSize = dummyParams("resumableTotalSize").head.toInt
+            val chunkNumber = c1("resumableChunkNumber").head.toInt
+            val chunkSize = c1("resumableChunkSize").head.toInt
+            val currentChunkSize = c1("resumableCurrentChunkSize").head.toInt
+            val filename = c1("resumableFilename").head
+            val identifier = c1("resumableIdentifier").head
+            val totalSize = c1("resumableTotalSize").head.toInt
             val actorRef = system.actorOf(ChunkConcatenator.props(filename, totalSize, chunkSize))
             val chunk = Chunk(chunkNumber, chunkSize, currentChunkSize, dummyChunk, filename, identifier, totalSize)
             actorRef !(chunk, self)
@@ -41,12 +41,12 @@ class ChunkConcatenatorSpec extends Specification with Mockito {
       "and then returns a Result protocol with its status is \"complete\" when all chunks are uploaded" in {
         new TestEnvironment(ActorSystem("TestSystem-02")) {
           new WithApplication {
-            val chunkNumber = dummyParams("resumableChunkNumber").head.toInt
-            val chunkSize = dummyParams("resumableChunkSize").head.toInt
-            val currentChunkSize = dummyParams("resumableCurrentChunkSize").head.toInt
-            val filename = dummyParams("resumableFilename").head
-            val identifier = dummyParams("resumableIdentifier").head
-            val totalSize = dummyParams("resumableTotalSize").head.toInt
+            val chunkNumber = c1("resumableChunkNumber").head.toInt
+            val chunkSize = c1("resumableChunkSize").head.toInt
+            val currentChunkSize = c1("resumableCurrentChunkSize").head.toInt
+            val filename = c1("resumableFilename").head
+            val identifier = c1("resumableIdentifier").head
+            val totalSize = c1("resumableTotalSize").head.toInt
             val actorRef = system.actorOf(ChunkConcatenatorSpec.props(filename, totalSize, chunkSize))
             val chunk = Chunk(chunkNumber, chunkSize, currentChunkSize, dummyChunk, filename, identifier, totalSize)
             actorRef !(chunk, self)
@@ -61,12 +61,12 @@ class ChunkConcatenatorSpec extends Specification with Mockito {
       "and then returns \"true\" when the chunk was already uploaded" in {
         new TestEnvironment(ActorSystem("TestSystem-03")) {
           new WithApplication {
-            val chunkNumber = dummyParams("resumableChunkNumber").head.toInt
-            val chunkSize = dummyParams("resumableChunkSize").head.toInt
-            val currentChunkSize = dummyParams("resumableCurrentChunkSize").head.toInt
-            val filename = dummyParams("resumableFilename").head
-            val identifier = dummyParams("resumableIdentifier").head
-            val totalSize = dummyParams("resumableTotalSize").head.toInt
+            val chunkNumber = c1("resumableChunkNumber").head.toInt
+            val chunkSize = c1("resumableChunkSize").head.toInt
+            val currentChunkSize = c1("resumableCurrentChunkSize").head.toInt
+            val filename = c1("resumableFilename").head
+            val identifier = c1("resumableIdentifier").head
+            val totalSize = c1("resumableTotalSize").head.toInt
             val actorRef = system.actorOf(ChunkConcatenator.props(filename, totalSize, chunkSize))
             val test = Test(chunkNumber)
             actorRef !(test, self)
@@ -82,12 +82,12 @@ class ChunkConcatenatorSpec extends Specification with Mockito {
 
             //////////////////////////////
             // upload a chunk
-            val chunkNumber = dummyParams("resumableChunkNumber").head.toInt
-            val chunkSize = dummyParams("resumableChunkSize").head.toInt
-            val currentChunkSize = dummyParams("resumableCurrentChunkSize").head.toInt
-            val filename = dummyParams("resumableFilename").head
-            val identifier = dummyParams("resumableIdentifier").head
-            val totalSize = dummyParams("resumableTotalSize").head.toInt
+            val chunkNumber = c1("resumableChunkNumber").head.toInt
+            val chunkSize = c1("resumableChunkSize").head.toInt
+            val currentChunkSize = c1("resumableCurrentChunkSize").head.toInt
+            val filename = c1("resumableFilename").head
+            val identifier = c1("resumableIdentifier").head
+            val totalSize = c1("resumableTotalSize").head.toInt
             val actorRef = system.actorOf(ChunkConcatenator.props(filename, totalSize, chunkSize))
             val chunk = Chunk(chunkNumber, chunkSize, currentChunkSize, dummyChunk, filename, identifier, totalSize)
             actorRef !(chunk, self)
