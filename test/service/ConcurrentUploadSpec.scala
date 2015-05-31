@@ -7,45 +7,35 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 import actor.ConcurrentUploader
 import helper.AkkaHelper.TestEnvironment
-import helper.ResumableHelper.{dummyParams, dummyChunk}
+import helper.ResumableHelper.{chunkFirst, dummyChunk}
 
 class ConcurrentUploadSpec extends Specification {
   class TestConcurrentUpload(implicit system: ActorSystem) extends ConcurrentUploadComponent with UploadComponent {
     val supervisor = system.actorOf(ConcurrentUploader.props)
   }
 
-  //////////////////////////////////////////////////////////////////////
-  // REGULAR CASE
-  //////////////////////////////////////////////////////////////////////
-
   "ConcurrentUploader#checkExistenceFor" should {
     "return \"false\" when the chunk is not uploaded yet" in new TestEnvironment(ActorSystem("TestSystem-01")) {
       new WithApplication {
         val concurrentUploadService = new TestConcurrentUpload
-        concurrentUploadService.checkExistenceFor(dummyParams) map {
-          case r: Boolean =>
-            r must equalTo(false)
+        concurrentUploadService.checkExistenceFor(chunkFirst) map {
+          case result: Boolean =>
+            result must equalTo(false)
         }
       }
     }
     "return \"true\" when the chunk is already uploaded" in new TestEnvironment(ActorSystem("TestSystem-02")) {
       new WithApplication {
         val concurrentUploadService = new TestConcurrentUpload
-        concurrentUploadService.concatenateFileChunk(dummyParams, dummyChunk) map {
-          case r1: String =>
-            r1 must equalTo("done")
-            concurrentUploadService.checkExistenceFor(dummyParams) map {
-              case r2: Boolean =>
-                r2 must equalTo(true)
+        concurrentUploadService.concatenateFileChunk(chunkFirst, dummyChunk) map {
+          case result1: String =>
+            result1 must equalTo("done")
+            concurrentUploadService.checkExistenceFor(chunkFirst) map {
+              case result2: Boolean =>
+                result2 must equalTo(true)
             }
         }
       }
     }
   }
-
-  //////////////////////////////////////////////////////////////////////
-  // IRREGULAR CASE
-  //////////////////////////////////////////////////////////////////////
-
-  // ...
 }
