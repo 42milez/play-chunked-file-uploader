@@ -13,13 +13,13 @@ import actor.ConcurrentUploader
 import actor.ConcurrentUploaderProtocol._
 
 /** */
-trait UploadServiceComponent {
+trait UploadComponent {
   val supervisor: ActorRef
   def getActorName(identifier: String): String = { sign(identifier) }
 }
 
 /** */
-trait ConcurrentUploadServiceComponent { this: UploadServiceComponent =>
+trait ConcurrentUploadServiceComponent { this: UploadComponent =>
   implicit private val timeout: akka.util.Timeout = 1 second
 
   /**
@@ -57,6 +57,6 @@ trait ConcurrentUploadServiceComponent { this: UploadServiceComponent =>
   }
 }
 
-class ConcurrentUploadService extends ConcurrentUploadServiceComponent with UploadServiceComponent {
+class ConcurrentUploadService extends ConcurrentUploadServiceComponent with UploadComponent {
   val supervisor = system.actorOf(ConcurrentUploader.props, "Supervisor")
 }

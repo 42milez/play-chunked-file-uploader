@@ -10,7 +10,7 @@ import helper.AkkaHelper.TestEnvironment
 import helper.ResumableHelper.{dummyParams, dummyChunk}
 
 class ConcurrentUploadSpec extends Specification {
-  class TestConcurrentUploadService(implicit system: ActorSystem) extends ConcurrentUploadServiceComponent with UploadServiceComponent {
+  class TestConcurrentUploadService(implicit system: ActorSystem) extends ConcurrentUploadServiceComponent with UploadComponent {
     val supervisor = system.actorOf(ConcurrentUploader.props)
   }
 
