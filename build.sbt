@@ -1,4 +1,4 @@
-lazy val `playconcurrentstream` = (project in file(".")).enablePlugins(PlayScala)
+lazy val `playconcurrentuploader` = (project in file(".")).enablePlugins(PlayScala)
 
 libraryDependencies ++= Seq(
   cache,
