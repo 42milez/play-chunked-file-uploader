@@ -5,6 +5,7 @@ import play.api.libs.concurrent.Akka.system
 import play.api.Play.current
 import scala.concurrent.duration.DurationInt
 
+import ChunkConcatenatorProtocol.Chunk
 import ConcurrentUploaderProtocol._
 
 /** */
