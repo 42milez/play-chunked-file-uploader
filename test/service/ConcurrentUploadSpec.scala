@@ -10,7 +10,7 @@ import helper.AkkaHelper.TestEnvironment
 import helper.ResumableHelper.{dummyParams, dummyChunk}
 
 class ConcurrentUploadSpec extends Specification {
-  class TestConcurrentUploadService(implicit system: ActorSystem) extends ConcurrentUploadComponent with UploadComponent {
+  class TestConcurrentUpload(implicit system: ActorSystem) extends ConcurrentUploadComponent with UploadComponent {
     val supervisor = system.actorOf(ConcurrentUploader.props)
   }
 
@@ -21,7 +21,7 @@ class ConcurrentUploadSpec extends Specification {
   "ConcurrentUploader#checkExistenceFor" should {
     "return \"false\" when the chunk is not uploaded yet" in new TestEnvironment(ActorSystem("TestSystem-01")) {
       new WithApplication {
-        val concurrentUploadService = new TestConcurrentUploadService
+        val concurrentUploadService = new TestConcurrentUpload
         concurrentUploadService.checkExistenceFor(dummyParams) map {
           case r: Boolean =>
             r must equalTo(false)
@@ -30,7 +30,7 @@ class ConcurrentUploadSpec extends Specification {
     }
     "return \"true\" when the chunk is already uploaded" in new TestEnvironment(ActorSystem("TestSystem-02")) {
       new WithApplication {
-        val concurrentUploadService = new TestConcurrentUploadService
+        val concurrentUploadService = new TestConcurrentUpload
         concurrentUploadService.concatenateFileChunk(dummyParams, dummyChunk) map {
           case r1: String =>
             r1 must equalTo("done")

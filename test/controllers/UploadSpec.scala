@@ -10,7 +10,7 @@ import org.specs2.mutable.Specification
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-import service.ConcurrentUploadService
+import service.ConcurrentUpload
 
 class UploadSpec extends Specification with Mockito {
   val chunkFirst = Map(
@@ -37,7 +37,7 @@ class UploadSpec extends Specification with Mockito {
   scala.util.Random.nextBytes(dummyChunk)
 
   object TestUpload extends UploadComponent with Controller with Mockito {
-    val uploadService = mock[ConcurrentUploadService]
+    val uploadService = mock[ConcurrentUpload]
     uploadService.checkExistenceFor(chunkFirst) returns Future(true)
     uploadService.checkExistenceFor(chunkSecond) returns Future(false)
     uploadService.concatenateFileChunk(chunkFirst, dummyChunk) returns Future("done")

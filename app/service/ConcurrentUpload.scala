@@ -57,6 +57,6 @@ trait ConcurrentUploadComponent { this: UploadComponent =>
   }
 }
 
-class ConcurrentUploadService extends ConcurrentUploadComponent with UploadComponent {
+class ConcurrentUpload extends ConcurrentUploadComponent with UploadComponent {
   val supervisor = system.actorOf(ConcurrentUploader.props, "Supervisor")
 }

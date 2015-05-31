@@ -4,10 +4,10 @@ import play.api.mvc.{Action, Controller, RawBuffer}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-import service.ConcurrentUploadService
+import service.ConcurrentUpload
 
 trait UploadComponent { this: Controller =>
-  val uploadService: ConcurrentUploadService
+  val uploadService: ConcurrentUpload
 
   /** Generate a file upload form.
     *
@@ -57,5 +57,5 @@ trait UploadComponent { this: Controller =>
 
 /** A controller which handles the file uploading operations. */
 object Upload extends UploadComponent with Controller {
-  val uploadService = new ConcurrentUploadService
+  val uploadService = new ConcurrentUpload
 }
