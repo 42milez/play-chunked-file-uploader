@@ -30,7 +30,7 @@ class ConcurrentUploader extends Actor {
       }
     // upload a chunk
     case d: Data =>
-      concatenate(d.actorName, d.c)
+      concatenate(d.actorName, d.chunk)
     // all chunks was uploaded
     case p: Progress if p.status == "complete" =>
       children.get(p.actorName) match {
@@ -65,7 +65,7 @@ class ConcurrentUploader extends Actor {
 
 object ConcurrentUploaderProtocol {
   case class Test(actorName: String, chunkNumber: Int)
-  case class Data(actorName: String, c: Chunk)
+  case class Data(actorName: String, chunk: Chunk)
   case class Progress(actorName: String, status: String, chunkNumber: Int, senderRef: ActorRef)
   case class Result(actorName: String, status: String, chunkNumber: Int)
 }
