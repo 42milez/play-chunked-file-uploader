@@ -6,6 +6,7 @@ import play.api.test.{FakeRequest, WithApplication}
 import play.api.test.Helpers.{BAD_REQUEST, INTERNAL_SERVER_ERROR, GET, NOT_FOUND, OK, status}
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
+import scala.concurrent.duration.DurationInt
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -15,6 +16,8 @@ import helper.ResumableHelper.dummyChunk
 import service.ConcurrentUpload
 
 class UploadSpec extends Specification with Mockito {
+  implicit private val timeout: akka.util.Timeout = 1 second
+
   object TestUpload extends UploadComponent with Controller with Mockito {
     val uploadService = mock[ConcurrentUpload]
     uploadService.checkExistenceFor(chunkFirst) returns Future(true)
