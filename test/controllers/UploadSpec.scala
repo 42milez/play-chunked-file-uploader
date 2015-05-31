@@ -13,7 +13,7 @@ import scala.concurrent.Future
 import helper.ResumableHelper.{chunkFirst, chunkSecond, chunkLast}
 import helper.ResumableHelper.{chunkFirstQS, chunkSecondQS, chunkLastQS, chunkLengthZeroQS}
 import helper.ResumableHelper.dummyChunk
-import service.ConcurrentUpload
+import services.ConcurrentUpload
 
 class UploadSpec extends Specification with Mockito {
   implicit private val timeout: akka.util.Timeout = 1 second

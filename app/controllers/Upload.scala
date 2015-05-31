@@ -4,7 +4,7 @@ import play.api.mvc.{Action, Controller, RawBuffer}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-import service.ConcurrentUpload
+import services.ConcurrentUpload
 
 trait UploadComponent { this: Controller =>
   val uploadService: ConcurrentUpload
