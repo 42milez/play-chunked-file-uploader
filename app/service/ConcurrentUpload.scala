@@ -7,8 +7,7 @@ import play.api.libs.Crypto.sign
 import play.api.libs.concurrent.Akka._
 import play.api.Play.current
 import scala.concurrent.duration.DurationInt
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 import actor.ConcurrentUploader
 import actor.ConcurrentUploaderProtocol._
@@ -28,7 +27,7 @@ trait ConcurrentUploadServiceComponent { this: UploadServiceComponent =>
    * @param chunkInfo
    * @return
    */
-  def checkExistenceFor(chunkInfo: Map[String, Seq[String]]): Future[Boolean] = {
+  def checkExistenceFor(chunkInfo: Map[String, Seq[String]])(implicit ec: ExecutionContext): Future[Boolean] = {
     val chunkNumber: Int = chunkInfo("resumableChunkNumber").head.toInt
     val identifier: String = chunkInfo("resumableIdentifier").head
     val actorName: String = getActorName(identifier)
@@ -41,7 +40,7 @@ trait ConcurrentUploadServiceComponent { this: UploadServiceComponent =>
    * @param chunk
    * @return
    */
-  def concatenateFileChunk(chunkInfo: Map[String, Seq[String]], chunk: Array[Byte]): Future[String] = {
+  def concatenateFileChunk(chunkInfo: Map[String, Seq[String]], chunk: Array[Byte])(implicit ec: ExecutionContext): Future[String] = {
     val chunkNumber: Int = chunkInfo("resumableChunkNumber").head.toInt
     val chunkSize: Int = chunkInfo("resumableChunkSize").head.toInt
     val currentChunkSize: Int = chunkInfo("resumableCurrentChunkSize").head.toInt
