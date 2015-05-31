@@ -11,13 +11,7 @@ import scala.math.ceil
 import dao.FilesDAO
 import models.{File => FileM}
 
-// See below for a practical design of creating an actor.
-// Props in: http://doc.akka.io/docs/akka/snapshot/scala/actors.html
-object Concatenator {
-  def props(fileName: String, totalSize: Int, chunkSize: Int): Props = Props(new Concatenator(fileName, totalSize, chunkSize))
-}
-
-class Concatenator(fileName: String, totalSize: Int, chunkSize: Int) extends Actor {
+class ChunkConcatenator(fileName: String, totalSize: Int, chunkSize: Int) extends Actor {
   import ConcurrentUploaderProtocol.Progress
 
   private val baseDir: String = Play.application.path + "/storage"
@@ -70,6 +64,12 @@ class Concatenator(fileName: String, totalSize: Int, chunkSize: Int) extends Act
       val isUploadedChunk = uploadedChunks.contains(chunkNumber)
       senderRef ! isUploadedChunk
   }
+}
+
+// See below for a practical design of creating an actor.
+// Props in: http://doc.akka.io/docs/akka/snapshot/scala/actors.html
+object ChunkConcatenator {
+  def props(fileName: String, totalSize: Int, chunkSize: Int): Props = Props(new ChunkConcatenator(fileName, totalSize, chunkSize))
 }
 
 case class FileChunk(chunkNumber: Int, chunkSize: Int, currentChunkSize: Int,
