@@ -44,11 +44,11 @@ trait ConcurrentUploadServiceComponent { this: UploadServiceComponent =>
     val chunkNumber: Int = chunkInfo("resumableChunkNumber").head.toInt
     val chunkSize: Int = chunkInfo("resumableChunkSize").head.toInt
     val currentChunkSize: Int = chunkInfo("resumableCurrentChunkSize").head.toInt
-    val filename: String = chunkInfo("resumableFilename").head
+    val fileName: String = chunkInfo("resumableFilename").head
     val identifier: String = chunkInfo("resumableIdentifier").head
     val totalSize: Int = chunkInfo("resumableTotalSize").head.toInt
     val actorName: String = getActorName(identifier)
-    val fc: Chunk = Chunk(chunkNumber, chunkSize, currentChunkSize, chunk, filename, identifier, totalSize)
+    val fc: Chunk = Chunk(chunkNumber, chunkSize, currentChunkSize, chunk, fileName, identifier, totalSize)
     // Concatenate chunks
     (supervisor ? new Data(actorName, fc)).mapTo[Result] map {
       case r: Result =>

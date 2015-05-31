@@ -48,7 +48,7 @@ class ChunkConcatenator(fileName: String, totalSize: Int, chunkSize: Int) extend
       else {
         if (uploadedChunks.size >= count) {
           val filesDao = new FilesDAO
-          filesDao.insert(FileM(None, fc.filename))
+          filesDao.insert(FileM(None, fc.fileName))
           sender() ! new Progress(self.path.name, "complete", fc.chunkNumber, senderRef)
         }
         else {
@@ -68,7 +68,7 @@ class ChunkConcatenator(fileName: String, totalSize: Int, chunkSize: Int) extend
 
 object ChunkConcatenatorProtocol {
   case class Chunk(chunkNumber: Int, chunkSize: Int, currentChunkSize: Int,
-                   data: Array[Byte], filename: String, identifier: String, totalSize: Int)
+                   data: Array[Byte], fileName: String, identifier: String, totalSize: Int)
   case class Test(chunkNumber: Int)
 }
 

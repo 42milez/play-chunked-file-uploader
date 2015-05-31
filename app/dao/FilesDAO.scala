@@ -30,8 +30,8 @@ class FilesDAO extends FilesComponent with HasDatabaseConfig[JdbcProfile] {
   def findById(id: Long): Future[FileM] =
     db.run(files.filter(_.id === id).result.head)
 
-  def findByName(filename: String): Future[FileM] =
-    db.run(files.filter(_.name === filename).result.head)
+  def findByName(fileName: String): Future[FileM] =
+    db.run(files.filter(_.name === fileName).result.head)
 
   def list(page: Int = 0, pageSize: Int = 10): Future[Page[FileM]] = {
     val offset = pageSize * page
