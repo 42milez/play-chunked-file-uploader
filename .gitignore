@@ -17,3 +17,4 @@ dist
 
 # Others
 storage/**/*
+!storage/keep_dir
