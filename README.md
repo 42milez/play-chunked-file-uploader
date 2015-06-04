@@ -2,8 +2,8 @@
 [![Build Status](https://travis-ci.org/AkihiroTAKASE/play-concurrent-uploader.svg?branch=master)](https://travis-ci.org/AkihiroTAKASE/play-concurrent-uploader)
 
 # Overview
-This application demonstrates an asynchronous file uploade by using Akka as its core operation.
-In order to perform the asynchronous uploade, [ResumableJS][3] is used as a part of the upload client.
+This application demonstrates an asynchronous file uploading by using Akka as its core feature.
+In order to perform the asynchronous uploade, [ResumableJS][3] is also used as a part of the upload client.
 [1]:http://akka.io/
 [2]:https://www.playframework.com/
 [3]:http://www.resumablejs.com/
