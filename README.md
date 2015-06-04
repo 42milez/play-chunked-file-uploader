@@ -1,3 +1,6 @@
+# play-concurrent-uploader
+[![Build Status](https://travis-ci.org/AkihiroTAKASE/play-concurrent-uploader.svg?branch=master)](https://travis-ci.org/AkihiroTAKASE/play-concurrent-uploader)
+
 # Overview
 I made this application for myself as leaning [Akka][1] with [Play Framework][2].
 
