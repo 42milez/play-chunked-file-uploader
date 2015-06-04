@@ -1,5 +1,3 @@
-# Concurrent Uploader
-
 # Overview
 I made this application for myself as leaning [Akka][1] with [Play Framework][2].
 
