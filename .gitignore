@@ -17,4 +17,4 @@ dist
 
 # Others
 storage/**/*
-!storage/keep_dir
+!storage/.keep_dir
