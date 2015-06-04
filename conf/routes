@@ -3,9 +3,11 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index
+GET         /                    controllers.Application.index
+
+GET         /uploadform          controllers.Upload.uploadForm
+GET         /upload              controllers.Upload.testBeforeUpload
+POST        /upload              controllers.Upload.upload
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
-
-    
+GET         /assets/*file        controllers.Assets.at(path="/public", file)
