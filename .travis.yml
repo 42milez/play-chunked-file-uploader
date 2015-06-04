@@ -1,10 +1,7 @@
-jdk:
-  - oraclejdk8
-
 language: scala
 
-scala:
-  - 2.11.6
+scala: 2.11.6
 
-script:
-  - sbt test
+jdk: oraclejdk8
+
+script: sbt test
