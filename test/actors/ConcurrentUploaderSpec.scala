@@ -46,6 +46,9 @@ class ConcurrentUploaderSpec extends Specification {
           val totalSize = c1("resumableTotalSize").head.toInt
           val chunk = Chunk(chunkNumber, chunkSize, currentChunkSize, dummyChunk, filename, identifier, totalSize)
           actorRef ! new Data(actorName, chunk)
+          expectMsgPF() {
+            case _: Result =>   // do nothing
+          }
 
           //////////////////////////////
           // check a chunk for existence
@@ -101,6 +104,9 @@ class ConcurrentUploaderSpec extends Specification {
           val totalSize = c1("resumableTotalSize").head.toInt
           val chunk = Chunk(chunkNumber, chunkSize, currentChunkSize, dummyChunk, filename, identifier, totalSize)
           actorRef ! new Data(actorName, chunk)
+          expectMsgPF() {
+            case _: Result =>   // do nothing
+          }
 
           //////////////////////////////
           // complete upload
