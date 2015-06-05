@@ -8,6 +8,16 @@ In order to perform the asynchronous uploade, [ResumableJS][3] is also used as a
 [2]:https://www.playframework.com/
 [3]:http://www.resumablejs.com/
 
+# What is the purpose?
+
+This application has three objectives below:
+
+ 1. Avoid blocking I/O in the default thread pool of Play Framework.
+ 2. Shorten the time when a upload operation uses a blocking I/O in a thread.
+ 3. Reduce the memory usage when the application receives a data.
+
+For this reasons, chunks are uploaded instead of a file itself. And uploaded chunks are concatenated in a thread which Play Akka plugin has instead of Play Framework default thread pool.
+
 # Copyright and license
 The MIT License
 
