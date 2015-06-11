@@ -1,5 +1,5 @@
 # play-chunked-file-uploader
-[![Build Status](https://travis-ci.org/AkihiroTAKASE/play-concurrent-uploader.svg?branch=master)](https://travis-ci.org/AkihiroTAKASE/play-concurrent-uploader)
+[![Build Status](https://travis-ci.org/AkihiroTAKASE/play-chunked-file-uploader.svg?branch=master)](https://travis-ci.org/AkihiroTAKASE/play-chunked-file-uploader)
 
 # Overview
 This application demonstrates an asynchronous file uploading by using Akka as its core feature.
