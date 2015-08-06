@@ -8,6 +8,8 @@ In order to perform the asynchronous uploade, [ResumableJS][3] is also used as a
 [2]:https://www.playframework.com/
 [3]:http://www.resumablejs.com/
 
+See also: [Concurrent file operation with Akka](http://akihiro-takase.tumblr.com/post/120685104926/concurrent-file-operation-with-akka-more)
+
 # What is the purpose?
 
 This application has three objectives below:
